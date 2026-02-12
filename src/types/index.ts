@@ -50,6 +50,22 @@ export interface ContrastIssue {
   severity: 'warning' | 'error';
 }
 
-export type UploadSource = 'file' | 'url';
+export interface BatchImage {
+  id: string;
+  file: File;
+  preview: string;
+  status: 'pending' | 'processing' | 'done' | 'error';
+  palette?: DesignPalette;
+  darkPalette?: DarkPalette;
+  error?: string;
+}
+
+export interface ClipboardState {
+  hasImage: boolean;
+  isReading: boolean;
+  error: string | null;
+}
+
+export type UploadSource = 'file' | 'url' | 'clipboard';
 
 export type AppStep = 'landing' | 'upload' | 'analysis' | 'preview';

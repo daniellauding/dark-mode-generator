@@ -1,11 +1,12 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, AlertTriangle, Check, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Download, AlertTriangle, Check, Moon, Sun, FileDown } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ExportModal } from '../components/ExportModal';
 import { ContrastBadge } from '../components/ContrastBadge';
 import { useDesignStore } from '../stores/designStore';
 import { useContrastValidation } from '../hooks/useContrastValidation';
+import { generateCSS, downloadFile } from '../utils/exportFormats';
 
 function MockUI({ palette, mode }: { palette: { bg: string; surface: string; text: string; accent: string; border: string; muted: string }; mode: string }) {
   return (
@@ -84,6 +85,15 @@ export function Preview() {
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
+  const [quickDownloaded, setQuickDownloaded] = useState(false);
+
+  const handleQuickDownload = useCallback(() => {
+    if (!darkPalette) return;
+    const css = generateCSS(darkPalette);
+    downloadFile(css, 'dark-mode-palette.css', 'text/css');
+    setQuickDownloaded(true);
+    setTimeout(() => setQuickDownloaded(false), 2000);
+  }, [darkPalette]);
 
   const handleScroll = useCallback((source: 'left' | 'right') => {
     const from = source === 'left' ? leftRef.current : rightRef.current;
@@ -128,6 +138,14 @@ export function Preview() {
           <div className="flex gap-3">
             <Button variant="secondary" onClick={() => navigate('/analysis')} icon={<ArrowLeft size={16} />}>
               Customize
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleQuickDownload}
+              icon={quickDownloaded ? <Check size={16} className="text-success" /> : <FileDown size={16} />}
+              title="Quick download as CSS"
+            >
+              {quickDownloaded ? 'Downloaded!' : 'Quick CSS'}
             </Button>
             <Button onClick={() => setShowExportModal(true)} icon={<Download size={16} />}>
               Export

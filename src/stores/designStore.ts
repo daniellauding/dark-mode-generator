@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { DesignPalette, DarkPalette, AppStep } from '../types';
+import type { DesignPalette, DarkPalette, AppStep, BatchImage, ClipboardState } from '../types';
 import { generateDarkPalette, generateSamplePalette, PRESETS } from '../utils/colorConversion';
 
 interface DesignState {
@@ -14,6 +14,13 @@ interface DesignState {
   accentSaturation: number;
   showExportModal: boolean;
 
+  // Batch state
+  batchImages: BatchImage[];
+  batchMode: boolean;
+
+  // Clipboard state
+  clipboard: ClipboardState;
+
   setStep: (step: AppStep) => void;
   setImage: (preview: string, name: string) => void;
   setPalette: (palette: DesignPalette) => void;
@@ -25,6 +32,16 @@ interface DesignState {
   setShowExportModal: (show: boolean) => void;
   loadSample: () => void;
   reset: () => void;
+
+  // Batch actions
+  addBatchImages: (images: BatchImage[]) => void;
+  removeBatchImage: (id: string) => void;
+  updateBatchImage: (id: string, update: Partial<BatchImage>) => void;
+  clearBatch: () => void;
+  setBatchMode: (on: boolean) => void;
+
+  // Clipboard actions
+  setClipboard: (state: Partial<ClipboardState>) => void;
 }
 
 export const useDesignStore = create<DesignState>((set, get) => ({
@@ -38,6 +55,10 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   textLightness: 95,
   accentSaturation: 80,
   showExportModal: false,
+
+  batchImages: [],
+  batchMode: false,
+  clipboard: { hasImage: false, isReading: false, error: null },
 
   setStep: (step) => set({ step }),
 
@@ -109,5 +130,32 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     textLightness: 95,
     accentSaturation: 80,
     showExportModal: false,
+    batchImages: [],
+    batchMode: false,
+    clipboard: { hasImage: false, isReading: false, error: null },
   }),
+
+  addBatchImages: (images) => set(s => ({
+    batchImages: [...s.batchImages, ...images],
+    batchMode: true,
+  })),
+
+  removeBatchImage: (id) => set(s => {
+    const batchImages = s.batchImages.filter(img => img.id !== id);
+    return { batchImages, batchMode: batchImages.length > 0 };
+  }),
+
+  updateBatchImage: (id, update) => set(s => ({
+    batchImages: s.batchImages.map(img =>
+      img.id === id ? { ...img, ...update } : img
+    ),
+  })),
+
+  clearBatch: () => set({ batchImages: [], batchMode: false }),
+
+  setBatchMode: (on) => set({ batchMode: on }),
+
+  setClipboard: (state) => set(s => ({
+    clipboard: { ...s.clipboard, ...state },
+  })),
 }));
