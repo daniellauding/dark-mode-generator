@@ -1,6 +1,6 @@
-import { Moon, RotateCcw } from 'lucide-react';
+import { Moon, RotateCcw, BookOpen } from 'lucide-react';
 import { useDesignStore } from '../stores/designStore';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 export function Nav() {
   const { step, reset } = useDesignStore();
@@ -73,7 +73,15 @@ export function Nav() {
             </button>
           )}
 
-          {isLanding && <div />}
+          {isLanding && (
+            <Link
+              to="/guide"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-dark-400 hover:text-dark-200 hover:bg-dark-700 transition-colors"
+            >
+              <BookOpen size={15} />
+              <span className="hidden sm:inline">Guide</span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
