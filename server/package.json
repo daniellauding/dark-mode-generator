@@ -1,0 +1,30 @@
+{
+  "name": "dark-mode-generator-api",
+  "version": "1.0.0",
+  "description": "API services for screenshot capture, color extraction, dark mode conversion, and APCA validation",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "apca-w3": "^0.1.9",
+    "colorparsley": "^0.1.8",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "node-vibrant": "^3.2.1-alpha.1",
+    "puppeteer": "^23.0.0",
+    "sharp": "^0.33.0",
+    "swagger-ui-express": "^5.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "@types/swagger-ui-express": "^4.1.7",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

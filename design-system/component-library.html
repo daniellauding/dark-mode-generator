@@ -1,0 +1,2306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Mode Generator - Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════
+       RESET & BASE
+       ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary:   #0b0f19;
+      --bg-secondary: #111827;
+      --bg-tertiary:  #1e293b;
+      --bg-hover:     #1e293b;
+      --bg-active:    #334155;
+      --bg-overlay:   rgba(0, 0, 0, 0.6);
+
+      --fg-primary:     #f8fafc;
+      --fg-secondary:   #94a3b8;
+      --fg-tertiary:    #64748b;
+      --fg-inverse:     #0b0f19;
+      --fg-link:        #60a5fa;
+
+      --brand-primary:       #3b82f6;
+      --brand-primary-hover: #2563eb;
+      --brand-primary-light: #60a5fa;
+      --brand-primary-bg:    rgba(59, 130, 246, 0.1);
+
+      --border-default: #1e293b;
+      --border-subtle:  #334155;
+      --border-strong:  #475569;
+      --border-focus:   #3b82f6;
+      --border-error:   #ef4444;
+      --border-success: #22c55e;
+
+      --status-error:      #ef4444;
+      --status-error-bg:   rgba(239, 68, 68, 0.1);
+      --status-warning:    #f59e0b;
+      --status-warning-bg: rgba(245, 158, 11, 0.1);
+      --status-success:    #22c55e;
+      --status-success-bg: rgba(34, 197, 94, 0.1);
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+      --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+      --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+      --shadow-xl:   0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+
+      --radius-sm:   4px;
+      --radius-md:   6px;
+      --radius-lg:   8px;
+      --radius-xl:   12px;
+      --radius-2xl:  16px;
+
+      --duration-fast:   150ms;
+      --duration-normal: 200ms;
+      --duration-slow:   300ms;
+      --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--fg-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT
+       ═══════════════════════════════════════════════════ */
+    .ds-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .ds-header {
+      text-align: center;
+      margin-bottom: 64px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .ds-header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f8fafc, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ds-header p {
+      color: var(--fg-secondary);
+      font-size: 1.125rem;
+    }
+
+    .ds-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .ds-nav a {
+      color: var(--fg-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      transition: all var(--duration-fast) var(--ease-default);
+    }
+
+    .ds-nav a:hover {
+      color: var(--fg-primary);
+      border-color: var(--border-subtle);
+      background: var(--bg-tertiary);
+    }
+
+    .ds-section {
+      margin-bottom: 80px;
+    }
+
+    .ds-section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .ds-section-desc {
+      color: var(--fg-secondary);
+      margin-bottom: 32px;
+      font-size: 0.9375rem;
+    }
+
+    .ds-subsection {
+      margin-bottom: 40px;
+    }
+
+    .ds-subsection-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--fg-secondary);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+    }
+
+    .ds-component-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .ds-component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .ds-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+    }
+
+    .ds-card-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--fg-secondary);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ds-label {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--fg-tertiary);
+      font-family: var(--font-mono);
+      margin-top: 8px;
+    }
+
+    .ds-divider {
+      border: none;
+      border-top: 1px solid var(--border-default);
+      margin: 64px 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       1. BUTTONS
+       ═══════════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-default);
+      white-space: nowrap;
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Sizes */
+    .btn-sm  { font-size: 0.8125rem; padding: 6px 12px;  border-radius: var(--radius-sm);  height: 32px; }
+    .btn-md  { font-size: 0.875rem;  padding: 8px 16px;  border-radius: var(--radius-md);  height: 40px; }
+    .btn-lg  { font-size: 1rem;      padding: 10px 24px; border-radius: var(--radius-lg);  height: 48px; }
+
+    /* Primary */
+    .btn-primary {
+      background: var(--brand-primary);
+      color: white;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--brand-primary-hover);
+      box-shadow: var(--shadow-glow);
+    }
+    .btn-primary:active:not(:disabled) {
+      background: #1d4ed8;
+      transform: scale(0.98);
+    }
+
+    /* Secondary */
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-active);
+    }
+    .btn-secondary:active:not(:disabled) {
+      background: #475569;
+      transform: scale(0.98);
+    }
+
+    /* Outline */
+    .btn-outline {
+      background: transparent;
+      color: var(--fg-primary);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-outline:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      border-color: var(--border-strong);
+    }
+    .btn-outline:active:not(:disabled) {
+      background: var(--bg-active);
+      transform: scale(0.98);
+    }
+
+    /* Ghost */
+    .btn-ghost {
+      background: transparent;
+      color: var(--fg-secondary);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+    }
+    .btn-ghost:active:not(:disabled) {
+      background: var(--bg-active);
+    }
+
+    /* Destructive */
+    .btn-destructive {
+      background: var(--status-error);
+      color: white;
+    }
+    .btn-destructive:hover:not(:disabled) {
+      background: #dc2626;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+    .btn-destructive:active:not(:disabled) {
+      background: #b91c1c;
+      transform: scale(0.98);
+    }
+
+    /* Link */
+    .btn-link {
+      background: transparent;
+      color: var(--fg-link);
+      padding-left: 0;
+      padding-right: 0;
+      height: auto;
+    }
+    .btn-link:hover:not(:disabled) {
+      color: #93c5fd;
+      text-decoration: underline;
+    }
+
+    /* Icon in button */
+    .btn svg {
+      width: 1em;
+      height: 1em;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       2. INPUT FIELDS
+       ═══════════════════════════════════════════════════ */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--fg-primary);
+    }
+
+    .input-label .required {
+      color: var(--status-error);
+      margin-left: 2px;
+    }
+
+    .input {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--fg-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      height: 40px;
+      width: 100%;
+      transition: all var(--duration-fast) var(--ease-default);
+      outline: none;
+    }
+
+    .input::placeholder {
+      color: var(--fg-tertiary);
+    }
+
+    .input:hover:not(:disabled):not(.input-error) {
+      border-color: var(--border-subtle);
+    }
+
+    .input:focus:not(.input-error) {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .input-error {
+      border-color: var(--border-error);
+    }
+
+    .input-error:focus {
+      border-color: var(--border-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--bg-secondary);
+    }
+
+    .input-helper {
+      font-size: 0.75rem;
+      color: var(--fg-tertiary);
+    }
+
+    .input-error-msg {
+      font-size: 0.75rem;
+      color: var(--status-error);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Input with icon */
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper .input {
+      padding-left: 36px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-tertiary);
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+
+    /* Textarea */
+    .textarea {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--fg-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      transition: border-color var(--duration-fast) var(--ease-default);
+      outline: none;
+    }
+
+    .textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       3. COLOR SWATCHES
+       ═══════════════════════════════════════════════════ */
+    .swatch {
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border-default);
+      transition: all var(--duration-fast) var(--ease-default);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .swatch:hover {
+      border-color: var(--border-strong);
+      transform: scale(1.05);
+      box-shadow: var(--shadow-md);
+    }
+
+    .swatch-sm { width: 32px;  height: 32px; border-radius: var(--radius-md); }
+    .swatch-md { width: 48px;  height: 48px; border-radius: var(--radius-lg); }
+    .swatch-lg { width: 72px;  height: 72px; border-radius: var(--radius-xl); }
+
+    .swatch-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--fg-tertiary);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    .swatch-group {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .swatch-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Palette row */
+    .palette-row {
+      display: flex;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+    }
+
+    .palette-cell {
+      flex: 1;
+      height: 56px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 4px;
+      min-width: 48px;
+    }
+
+    .palette-cell span {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       4. COLOR PICKER
+       ═══════════════════════════════════════════════════ */
+    .color-picker {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      width: 280px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .cp-saturation {
+      width: 100%;
+      height: 160px;
+      border-radius: var(--radius-md);
+      position: relative;
+      margin-bottom: 16px;
+      cursor: crosshair;
+      background: linear-gradient(to right, #fff, hsl(220, 100%, 50%));
+    }
+
+    .cp-saturation::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #000, transparent);
+      border-radius: inherit;
+    }
+
+    .cp-cursor {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(0,0,0,0.5);
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      top: 30%;
+      left: 70%;
+    }
+
+    .cp-hue-slider {
+      width: 100%;
+      height: 14px;
+      border-radius: var(--radius-full, 9999px);
+      background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+      position: relative;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+
+    .cp-hue-thumb {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(0,0,0,0.5);
+      top: 50%;
+      transform: translate(-50%, -50%);
+      left: 61%;
+    }
+
+    .cp-alpha-slider {
+      width: 100%;
+      height: 14px;
+      border-radius: 9999px;
+      position: relative;
+      margin-bottom: 16px;
+      cursor: pointer;
+      background: linear-gradient(to right, transparent, var(--brand-primary));
+      background-color: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50% / 8px 8px;
+    }
+
+    .cp-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .cp-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cp-input-group label {
+      font-size: 0.6875rem;
+      color: var(--fg-tertiary);
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .cp-input-group input {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--fg-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      text-align: center;
+      outline: none;
+      width: 100%;
+    }
+
+    .cp-input-group input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .cp-hex-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .cp-hex-row .cp-input-group { flex: 1; }
+
+    .cp-preview {
+      width: 40px;
+      height: 33px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-default);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       5. SLIDERS
+       ═══════════════════════════════════════════════════ */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--fg-primary);
+    }
+
+    .slider-value {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--brand-primary-light, #60a5fa);
+      background: var(--brand-primary-bg);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 9999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      border: 2px solid white;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+      cursor: grab;
+      transition: transform var(--duration-fast) var(--ease-default);
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .slider::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.1);
+    }
+
+    .slider:focus-visible::-webkit-slider-thumb {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       6. UPLOAD ZONE
+       ═══════════════════════════════════════════════════ */
+    .upload-zone {
+      border: 2px dashed var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 48px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-default);
+      background: var(--bg-secondary);
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: var(--brand-primary);
+      background: var(--brand-primary-bg);
+    }
+
+    .upload-zone.drag-over {
+      box-shadow: var(--shadow-glow);
+      transform: scale(1.01);
+    }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      color: var(--fg-tertiary);
+    }
+
+    .upload-zone:hover .upload-icon,
+    .upload-zone.drag-over .upload-icon {
+      color: var(--brand-primary);
+    }
+
+    .upload-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--fg-primary);
+      margin-bottom: 4px;
+    }
+
+    .upload-title span {
+      color: var(--brand-primary);
+      text-decoration: underline;
+    }
+
+    .upload-hint {
+      font-size: 0.8125rem;
+      color: var(--fg-tertiary);
+    }
+
+    .upload-or {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 20px 0;
+      color: var(--fg-tertiary);
+      font-size: 0.8125rem;
+    }
+
+    .upload-or::before,
+    .upload-or::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid var(--border-default);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       7. BEFORE/AFTER COMPARISON
+       ═══════════════════════════════════════════════════ */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-md);
+    }
+
+    .comparison-panel {
+      padding: 24px;
+      min-height: 200px;
+    }
+
+    .comparison-panel.light {
+      background: #ffffff;
+      color: #1a1a1a;
+    }
+
+    .comparison-panel.dark {
+      background: var(--bg-secondary);
+      color: var(--fg-primary);
+    }
+
+    .comparison-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .comparison-label .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .comparison-panel.light .comparison-label .dot { background: #64748b; }
+    .comparison-panel.dark .comparison-label .dot { background: var(--brand-primary); }
+
+    .comparison-panel.light .comparison-label { color: #64748b; }
+    .comparison-panel.dark .comparison-label { color: var(--fg-secondary); }
+
+    /* Mock content inside panels */
+    .mock-card {
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .comparison-panel.light .mock-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .comparison-panel.dark .mock-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-default);
+    }
+
+    .mock-heading {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .mock-text {
+      font-size: 0.8125rem;
+      opacity: 0.7;
+    }
+
+    .mock-btn {
+      display: inline-block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: var(--radius-md);
+      margin-top: 10px;
+    }
+
+    .comparison-panel.light .mock-btn {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .comparison-panel.dark .mock-btn {
+      background: var(--brand-primary);
+      color: white;
+    }
+
+    /* Slider comparison */
+    .comparison-slider {
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+      height: 200px;
+    }
+
+    .comparison-slider .divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: white;
+      z-index: 2;
+      cursor: ew-resize;
+    }
+
+    .comparison-slider .divider-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       8. CONTRAST INDICATORS
+       ═══════════════════════════════════════════════════ */
+    .contrast-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-full, 9999px);
+      font-family: var(--font-mono);
+    }
+
+    .contrast-pass {
+      background: var(--status-success-bg);
+      color: var(--status-success);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .contrast-fail {
+      background: var(--status-error-bg);
+      color: var(--status-error);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .contrast-warn {
+      background: var(--status-warning-bg);
+      color: var(--status-warning);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .contrast-badge .icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .contrast-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .contrast-preview {
+      width: 64px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .contrast-info {
+      flex: 1;
+    }
+
+    .contrast-ratio {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--fg-primary);
+    }
+
+    .contrast-detail {
+      font-size: 0.75rem;
+      color: var(--fg-tertiary);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       9. EXPORT MODAL
+       ═══════════════════════════════════════════════════ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+      /* Static for display purposes */
+      position: relative;
+      min-height: 400px;
+      border-radius: var(--radius-xl);
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .modal-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      color: var(--fg-tertiary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--duration-fast) var(--ease-default);
+    }
+
+    .modal-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+    }
+
+    .modal-body { padding: 24px; }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-default);
+    }
+
+    /* Export format tabs */
+    .export-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .export-tab {
+      flex: 1;
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--fg-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-default);
+    }
+
+    .export-tab.active {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .export-tab:hover:not(.active) {
+      color: var(--fg-primary);
+    }
+
+    /* Code preview */
+    .code-preview {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      color: var(--fg-secondary);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .code-preview .keyword { color: #c084fc; }
+    .code-preview .string { color: #86efac; }
+    .code-preview .prop { color: #60a5fa; }
+    .code-preview .value { color: #fbbf24; }
+    .code-preview .comment { color: #475569; }
+
+    /* ═══════════════════════════════════════════════════
+       10. TOAST NOTIFICATIONS
+       ═══════════════════════════════════════════════════ */
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-default);
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-lg);
+      max-width: 400px;
+      width: 100%;
+      animation: toast-in 0.3s var(--ease-default);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .toast-content { flex: 1; }
+
+    .toast-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--fg-primary);
+      margin-bottom: 2px;
+    }
+
+    .toast-message {
+      font-size: 0.8125rem;
+      color: var(--fg-secondary);
+    }
+
+    .toast-close {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      color: var(--fg-tertiary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .toast-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--fg-primary);
+    }
+
+    .toast-success { border-left: 3px solid var(--status-success); }
+    .toast-error   { border-left: 3px solid var(--status-error); }
+    .toast-warning { border-left: 3px solid var(--status-warning); }
+    .toast-info    { border-left: 3px solid var(--brand-primary); }
+
+    .toast-success .toast-icon { color: var(--status-success); }
+    .toast-error   .toast-icon { color: var(--status-error); }
+    .toast-warning .toast-icon { color: var(--status-warning); }
+    .toast-info    .toast-icon { color: var(--brand-primary); }
+
+    /* ═══════════════════════════════════════════════════
+       11. TYPOGRAPHY SHOWCASE
+       ═══════════════════════════════════════════════════ */
+    .type-scale {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .type-meta {
+      min-width: 120px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--fg-tertiary);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       12. SPACING / RADIUS / SHADOW PREVIEWS
+       ═══════════════════════════════════════════════════ */
+    .spacing-preview {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .spacing-bar {
+      height: 16px;
+      background: var(--brand-primary);
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
+    .spacing-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--fg-tertiary);
+      min-width: 80px;
+    }
+
+    .radius-preview {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .radius-box {
+      width: 64px;
+      height: 64px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shadow-preview {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .shadow-box {
+      width: 120px;
+      height: 80px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--fg-tertiary);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       13. SELECT / DROPDOWN
+       ═══════════════════════════════════════════════════ */
+    .select {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--fg-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 10px 36px 10px 12px;
+      height: 40px;
+      width: 100%;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 3.5L11.5 6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color var(--duration-fast) var(--ease-default);
+    }
+
+    .select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       14. TOGGLE / SWITCH
+       ═══════════════════════════════════════════════════ */
+    .toggle {
+      width: 44px;
+      height: 24px;
+      border-radius: 9999px;
+      background: var(--bg-active);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: background var(--duration-fast) var(--ease-default);
+      flex-shrink: 0;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: white;
+      top: 3px;
+      left: 3px;
+      transition: transform var(--duration-fast) var(--ease-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toggle.active {
+      background: var(--brand-primary);
+    }
+
+    .toggle.active::after {
+      transform: translateX(20px);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       15. BADGE / TAG
+       ═══════════════════════════════════════════════════ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      line-height: 1.5;
+    }
+
+    .badge-default { background: var(--bg-tertiary); color: var(--fg-secondary); }
+    .badge-primary { background: var(--brand-primary-bg); color: var(--brand-primary-light); }
+    .badge-success { background: var(--status-success-bg); color: var(--status-success); }
+    .badge-error   { background: var(--status-error-bg); color: var(--status-error); }
+    .badge-warning { background: var(--status-warning-bg); color: var(--status-warning); }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE DEMO
+       ═══════════════════════════════════════════════════ */
+    .responsive-demo {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .responsive-frame {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .responsive-frame-header {
+      background: var(--bg-active);
+      padding: 6px 12px;
+      font-size: 0.6875rem;
+      color: var(--fg-tertiary);
+      font-family: var(--font-mono);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .responsive-frame-body {
+      padding: 12px;
+    }
+
+    .rf-mobile { width: 160px; }
+    .rf-tablet { width: 240px; }
+    .rf-desktop { width: 360px; }
+
+    /* Responsive utility */
+    @media (max-width: 768px) {
+      .ds-container { padding: 24px 16px; }
+      .ds-header h1 { font-size: 1.5rem; }
+      .ds-component-row { flex-direction: column; align-items: flex-start; }
+      .ds-component-grid { grid-template-columns: 1fr; }
+      .comparison { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ds-container">
+
+    <!-- HEADER -->
+    <header class="ds-header">
+      <h1>Dark Mode Generator</h1>
+      <p>Design System & Component Library v1.0</p>
+      <nav class="ds-nav">
+        <a href="#colors">Colors</a>
+        <a href="#typography">Typography</a>
+        <a href="#spacing">Spacing</a>
+        <a href="#buttons">Buttons</a>
+        <a href="#inputs">Inputs</a>
+        <a href="#swatches">Swatches</a>
+        <a href="#picker">Color Picker</a>
+        <a href="#sliders">Sliders</a>
+        <a href="#upload">Upload</a>
+        <a href="#comparison">Comparison</a>
+        <a href="#contrast">Contrast</a>
+        <a href="#modal">Modal</a>
+        <a href="#toasts">Toasts</a>
+      </nav>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════
+         COLORS
+         ═══════════════════════════════════════════════ -->
+    <section id="colors" class="ds-section">
+      <h2 class="ds-section-title">Colors</h2>
+      <p class="ds-section-desc">Dark theme palette built on a navy-tinted gray scale with blue as the primary accent.</p>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Gray Scale</h3>
+        <div class="palette-row" style="margin-bottom: 24px;">
+          <div class="palette-cell" style="background:#f8fafc;"><span style="color:#0f172a;">50</span></div>
+          <div class="palette-cell" style="background:#f1f5f9;"><span style="color:#0f172a;">100</span></div>
+          <div class="palette-cell" style="background:#e2e8f0;"><span style="color:#0f172a;">200</span></div>
+          <div class="palette-cell" style="background:#cbd5e1;"><span style="color:#0f172a;">300</span></div>
+          <div class="palette-cell" style="background:#94a3b8;"><span style="color:#0f172a;">400</span></div>
+          <div class="palette-cell" style="background:#64748b;"><span style="color:#fff;">500</span></div>
+          <div class="palette-cell" style="background:#475569;"><span style="color:#fff;">600</span></div>
+          <div class="palette-cell" style="background:#334155;"><span style="color:#fff;">700</span></div>
+          <div class="palette-cell" style="background:#1e293b;"><span style="color:#fff;">800</span></div>
+          <div class="palette-cell" style="background:#0f172a;"><span style="color:#fff;">900</span></div>
+          <div class="palette-cell" style="background:#020617;"><span style="color:#fff;">950</span></div>
+        </div>
+
+        <h3 class="ds-subsection-title">Blue (Primary)</h3>
+        <div class="palette-row" style="margin-bottom: 24px;">
+          <div class="palette-cell" style="background:#eff6ff;"><span style="color:#1e3a8a;">50</span></div>
+          <div class="palette-cell" style="background:#dbeafe;"><span style="color:#1e3a8a;">100</span></div>
+          <div class="palette-cell" style="background:#bfdbfe;"><span style="color:#1e3a8a;">200</span></div>
+          <div class="palette-cell" style="background:#93c5fd;"><span style="color:#1e3a8a;">300</span></div>
+          <div class="palette-cell" style="background:#60a5fa;"><span style="color:#fff;">400</span></div>
+          <div class="palette-cell" style="background:#3b82f6;"><span style="color:#fff;">500</span></div>
+          <div class="palette-cell" style="background:#2563eb;"><span style="color:#fff;">600</span></div>
+          <div class="palette-cell" style="background:#1d4ed8;"><span style="color:#fff;">700</span></div>
+          <div class="palette-cell" style="background:#1e40af;"><span style="color:#fff;">800</span></div>
+          <div class="palette-cell" style="background:#1e3a8a;"><span style="color:#fff;">900</span></div>
+        </div>
+
+        <h3 class="ds-subsection-title">Status Colors</h3>
+        <div class="ds-component-row" style="margin-bottom: 24px;">
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#ef4444;"></div>
+            <span class="swatch-label">Error</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#f59e0b;"></div>
+            <span class="swatch-label">Warning</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#22c55e;"></div>
+            <span class="swatch-label">Success</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#3b82f6;"></div>
+            <span class="swatch-label">Info</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#8b5cf6;"></div>
+            <span class="swatch-label">Purple</span>
+          </div>
+        </div>
+
+        <h3 class="ds-subsection-title">Semantic Surfaces</h3>
+        <div class="ds-component-row">
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#0b0f19; border-color:#334155;"></div>
+            <span class="swatch-label">bg-primary</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#111827; border-color:#334155;"></div>
+            <span class="swatch-label">bg-secondary</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#1e293b; border-color:#334155;"></div>
+            <span class="swatch-label">bg-tertiary</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#334155; border-color:#475569;"></div>
+            <span class="swatch-label">bg-active</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         TYPOGRAPHY
+         ═══════════════════════════════════════════════ -->
+    <section id="typography" class="ds-section">
+      <h2 class="ds-section-title">Typography</h2>
+      <p class="ds-section-desc">Inter for UI, JetBrains Mono for code. Scale from 12px to 48px.</p>
+
+      <div class="type-scale">
+        <div class="type-row"><span class="type-meta">5xl / 48px / 700</span> <span style="font-size:3rem; font-weight:700; letter-spacing:-0.025em;">Dark Mode</span></div>
+        <div class="type-row"><span class="type-meta">4xl / 36px / 700</span> <span style="font-size:2.25rem; font-weight:700; letter-spacing:-0.025em;">Generate Dark Mode</span></div>
+        <div class="type-row"><span class="type-meta">3xl / 30px / 600</span> <span style="font-size:1.875rem; font-weight:600;">Transform Any Design</span></div>
+        <div class="type-row"><span class="type-meta">2xl / 24px / 600</span> <span style="font-size:1.5rem; font-weight:600;">Color Extraction</span></div>
+        <div class="type-row"><span class="type-meta">xl / 20px / 600</span> <span style="font-size:1.25rem; font-weight:600;">Upload Your Screenshot</span></div>
+        <div class="type-row"><span class="type-meta">lg / 18px / 500</span> <span style="font-size:1.125rem; font-weight:500;">Customize and Preview</span></div>
+        <div class="type-row"><span class="type-meta">base / 16px / 400</span> <span style="font-size:1rem; font-weight:400;">Body text for descriptions and explanations.</span></div>
+        <div class="type-row"><span class="type-meta">sm / 14px / 400</span> <span style="font-size:0.875rem; font-weight:400;">Secondary text, form labels, and helper text.</span></div>
+        <div class="type-row"><span class="type-meta">xs / 12px / 500</span> <span style="font-size:0.75rem; font-weight:500;">CAPTION, BADGE, METADATA</span></div>
+      </div>
+
+      <div style="margin-top: 32px;">
+        <h3 class="ds-subsection-title">Monospace</h3>
+        <div style="font-family: var(--font-mono); background: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: 16px;">
+          <div style="font-size: 0.875rem; color: var(--fg-secondary); margin-bottom: 4px;">/* JetBrains Mono */</div>
+          <div style="color: #c084fc;">background:</div> <span style="color: #86efac;">#0b0f19</span>;
+          <div style="color: #c084fc;">color:</div> <span style="color: #86efac;">#f8fafc</span>;
+          <div style="color: #c084fc;">font-family:</div> <span style="color: #fbbf24;">'Inter'</span>;
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         SPACING & RADIUS & SHADOWS
+         ═══════════════════════════════════════════════ -->
+    <section id="spacing" class="ds-section">
+      <h2 class="ds-section-title">Spacing, Radius & Shadows</h2>
+      <p class="ds-section-desc">4px base unit spacing scale. Dark-optimized elevation shadows.</p>
+
+      <div class="ds-component-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="ds-card">
+          <div class="ds-card-title">Spacing Scale</div>
+          <div class="spacing-preview"><span class="spacing-meta">4px (1)</span><div class="spacing-bar" style="width:4px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">8px (2)</span><div class="spacing-bar" style="width:8px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">12px (3)</span><div class="spacing-bar" style="width:12px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">16px (4)</span><div class="spacing-bar" style="width:16px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">24px (6)</span><div class="spacing-bar" style="width:24px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">32px (8)</span><div class="spacing-bar" style="width:32px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">48px (12)</span><div class="spacing-bar" style="width:48px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">64px (16)</span><div class="spacing-bar" style="width:64px;"></div></div>
+          <div class="spacing-preview"><span class="spacing-meta">80px (20)</span><div class="spacing-bar" style="width:80px;"></div></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Border Radius</div>
+          <div class="radius-preview">
+            <div style="text-align: center;">
+              <div class="radius-box" style="border-radius: 4px;"><span class="ds-label" style="margin:0;">4px</span></div>
+              <span class="ds-label">sm</span>
+            </div>
+            <div style="text-align: center;">
+              <div class="radius-box" style="border-radius: 6px;"><span class="ds-label" style="margin:0;">6px</span></div>
+              <span class="ds-label">md</span>
+            </div>
+            <div style="text-align: center;">
+              <div class="radius-box" style="border-radius: 8px;"><span class="ds-label" style="margin:0;">8px</span></div>
+              <span class="ds-label">lg</span>
+            </div>
+            <div style="text-align: center;">
+              <div class="radius-box" style="border-radius: 12px;"><span class="ds-label" style="margin:0;">12px</span></div>
+              <span class="ds-label">xl</span>
+            </div>
+            <div style="text-align: center;">
+              <div class="radius-box" style="border-radius: 16px;"><span class="ds-label" style="margin:0;">16px</span></div>
+              <span class="ds-label">2xl</span>
+            </div>
+            <div style="text-align: center;">
+              <div class="radius-box" style="border-radius: 9999px; width: 64px;"><span class="ds-label" style="margin:0;">full</span></div>
+              <span class="ds-label">full</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Shadows (Dark Elevation)</div>
+          <div class="shadow-preview" style="flex-direction: column; gap: 16px;">
+            <div class="shadow-box" style="box-shadow: var(--shadow-sm);">shadow-sm</div>
+            <div class="shadow-box" style="box-shadow: var(--shadow-md);">shadow-md</div>
+            <div class="shadow-box" style="box-shadow: var(--shadow-lg);">shadow-lg</div>
+            <div class="shadow-box" style="box-shadow: var(--shadow-xl);">shadow-xl</div>
+            <div class="shadow-box" style="box-shadow: var(--shadow-glow);">glow-blue</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         BUTTONS
+         ═══════════════════════════════════════════════ -->
+    <section id="buttons" class="ds-section">
+      <h2 class="ds-section-title">Buttons</h2>
+      <p class="ds-section-desc">6 variants (Primary, Secondary, Outline, Ghost, Destructive, Link) x 3 sizes (SM, MD, LG).</p>
+
+      <!-- Primary -->
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Primary</h3>
+        <div class="ds-component-row">
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary btn-md">Medium</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+          <button class="btn btn-primary btn-md" disabled>Disabled</button>
+        </div>
+        <div class="ds-component-row">
+          <button class="btn btn-primary btn-md">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
+            With Icon
+          </button>
+          <button class="btn btn-primary btn-md">Generate Dark Mode</button>
+        </div>
+      </div>
+
+      <!-- Secondary -->
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Secondary</h3>
+        <div class="ds-component-row">
+          <button class="btn btn-secondary btn-sm">Small</button>
+          <button class="btn btn-secondary btn-md">Medium</button>
+          <button class="btn btn-secondary btn-lg">Large</button>
+          <button class="btn btn-secondary btn-md" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <!-- Outline -->
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Outline</h3>
+        <div class="ds-component-row">
+          <button class="btn btn-outline btn-sm">Small</button>
+          <button class="btn btn-outline btn-md">Medium</button>
+          <button class="btn btn-outline btn-lg">Large</button>
+          <button class="btn btn-outline btn-md" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <!-- Ghost -->
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Ghost</h3>
+        <div class="ds-component-row">
+          <button class="btn btn-ghost btn-sm">Small</button>
+          <button class="btn btn-ghost btn-md">Medium</button>
+          <button class="btn btn-ghost btn-lg">Large</button>
+          <button class="btn btn-ghost btn-md" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <!-- Destructive -->
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Destructive</h3>
+        <div class="ds-component-row">
+          <button class="btn btn-destructive btn-sm">Small</button>
+          <button class="btn btn-destructive btn-md">Medium</button>
+          <button class="btn btn-destructive btn-lg">Large</button>
+          <button class="btn btn-destructive btn-md" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <!-- Link -->
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Link</h3>
+        <div class="ds-component-row">
+          <button class="btn btn-link btn-sm">Small Link</button>
+          <button class="btn btn-link btn-md">Medium Link</button>
+          <button class="btn btn-link btn-lg">Large Link</button>
+          <button class="btn btn-link btn-md" disabled>Disabled Link</button>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         INPUTS
+         ═══════════════════════════════════════════════ -->
+    <section id="inputs" class="ds-section">
+      <h2 class="ds-section-title">Input Fields</h2>
+      <p class="ds-section-desc">Text and URL inputs with default, focus, error, and disabled states.</p>
+
+      <div class="ds-component-grid">
+        <!-- Default -->
+        <div class="ds-card">
+          <div class="ds-card-title">Default</div>
+          <div class="input-group">
+            <label class="input-label">Website URL</label>
+            <input class="input" type="text" placeholder="https://example.com">
+            <span class="input-helper">Enter the URL of the website to transform</span>
+          </div>
+        </div>
+
+        <!-- With Icon -->
+        <div class="ds-card">
+          <div class="ds-card-title">With Icon</div>
+          <div class="input-group">
+            <label class="input-label">Search colors</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+              <input class="input" type="text" placeholder="Search...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="ds-card">
+          <div class="ds-card-title">Error State</div>
+          <div class="input-group">
+            <label class="input-label">Website URL <span class="required">*</span></label>
+            <input class="input input-error" type="text" value="not-a-valid-url">
+            <span class="input-error-msg">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              Please enter a valid URL
+            </span>
+          </div>
+        </div>
+
+        <!-- Disabled -->
+        <div class="ds-card">
+          <div class="ds-card-title">Disabled</div>
+          <div class="input-group">
+            <label class="input-label">Processing URL</label>
+            <input class="input" type="text" value="https://example.com" disabled>
+            <span class="input-helper">Currently processing...</span>
+          </div>
+        </div>
+
+        <!-- Select -->
+        <div class="ds-card">
+          <div class="ds-card-title">Select / Dropdown</div>
+          <div class="input-group">
+            <label class="input-label">Export Format</label>
+            <select class="select">
+              <option>CSS Variables</option>
+              <option>JSON Tokens</option>
+              <option>PNG Screenshot</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <div class="ds-card">
+          <div class="ds-card-title">Textarea</div>
+          <div class="input-group">
+            <label class="input-label">Custom CSS</label>
+            <textarea class="textarea" placeholder="Paste custom CSS overrides..."></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         COLOR SWATCHES
+         ═══════════════════════════════════════════════ -->
+    <section id="swatches" class="ds-section">
+      <h2 class="ds-section-title">Color Swatches</h2>
+      <p class="ds-section-desc">Small, medium, and large swatches for palette display.</p>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Small (32px) - Inline Palette</h3>
+        <div class="swatch-group">
+          <div class="swatch swatch-sm" style="background:#0b0f19;"></div>
+          <div class="swatch swatch-sm" style="background:#1e293b;"></div>
+          <div class="swatch swatch-sm" style="background:#334155;"></div>
+          <div class="swatch swatch-sm" style="background:#3b82f6;"></div>
+          <div class="swatch swatch-sm" style="background:#60a5fa;"></div>
+          <div class="swatch swatch-sm" style="background:#f8fafc;"></div>
+          <div class="swatch swatch-sm" style="background:#ef4444;"></div>
+          <div class="swatch swatch-sm" style="background:#22c55e;"></div>
+        </div>
+      </div>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Medium (48px) - Extracted Colors</h3>
+        <div class="swatch-group">
+          <div class="swatch-item">
+            <div class="swatch swatch-md" style="background:#0b0f19;"></div>
+            <span class="swatch-label">#0b0f19</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-md" style="background:#1e293b;"></div>
+            <span class="swatch-label">#1e293b</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-md" style="background:#3b82f6;"></div>
+            <span class="swatch-label">#3b82f6</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-md" style="background:#60a5fa;"></div>
+            <span class="swatch-label">#60a5fa</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-md" style="background:#f8fafc;"></div>
+            <span class="swatch-label">#f8fafc</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-md" style="background:#ef4444;"></div>
+            <span class="swatch-label">#ef4444</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Large (72px) - Color Detail</h3>
+        <div class="swatch-group">
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#3b82f6;"></div>
+            <span class="swatch-label">Primary</span>
+            <span class="ds-label" style="margin-top:2px;">#3b82f6</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#0b0f19; border-color:#334155;"></div>
+            <span class="swatch-label">Background</span>
+            <span class="ds-label" style="margin-top:2px;">#0b0f19</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#f8fafc;"></div>
+            <span class="swatch-label">Foreground</span>
+            <span class="ds-label" style="margin-top:2px;">#f8fafc</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#ef4444;"></div>
+            <span class="swatch-label">Error</span>
+            <span class="ds-label" style="margin-top:2px;">#ef4444</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch swatch-lg" style="background:#22c55e;"></div>
+            <span class="swatch-label">Success</span>
+            <span class="ds-label" style="margin-top:2px;">#22c55e</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         COLOR PICKER
+         ═══════════════════════════════════════════════ -->
+    <section id="picker" class="ds-section">
+      <h2 class="ds-section-title">Color Picker Panel</h2>
+      <p class="ds-section-desc">Full color picker with saturation/brightness area, hue slider, and value inputs.</p>
+
+      <div class="ds-component-row" style="gap: 32px;">
+        <div class="color-picker">
+          <div class="cp-saturation">
+            <div class="cp-cursor"></div>
+          </div>
+          <div class="cp-hue-slider">
+            <div class="cp-hue-thumb"></div>
+          </div>
+          <div class="cp-hex-row" style="margin-bottom: 12px;">
+            <div class="cp-input-group">
+              <label>HEX</label>
+              <input type="text" value="#3B82F6">
+            </div>
+            <div class="cp-preview" style="background: #3b82f6;"></div>
+          </div>
+          <div class="cp-inputs">
+            <div class="cp-input-group">
+              <label>R</label>
+              <input type="text" value="59">
+            </div>
+            <div class="cp-input-group">
+              <label>G</label>
+              <input type="text" value="130">
+            </div>
+            <div class="cp-input-group">
+              <label>B</label>
+              <input type="text" value="246">
+            </div>
+          </div>
+          <div class="cp-inputs">
+            <div class="cp-input-group">
+              <label>H</label>
+              <input type="text" value="217">
+            </div>
+            <div class="cp-input-group">
+              <label>S</label>
+              <input type="text" value="92%">
+            </div>
+            <div class="cp-input-group">
+              <label>L</label>
+              <input type="text" value="60%">
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 1;">
+          <div class="ds-card" style="margin-bottom: 16px;">
+            <div class="ds-card-title">Usage</div>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.875rem; color: var(--fg-secondary);">
+              <li>Click the saturation area to pick brightness/saturation</li>
+              <li>Drag the hue slider to change color</li>
+              <li>Enter exact HEX, RGB, or HSL values</li>
+              <li>Preview swatch updates in real-time</li>
+            </ul>
+          </div>
+          <div class="ds-card">
+            <div class="ds-card-title">Preset Palettes</div>
+            <div class="swatch-group" style="margin-bottom: 12px;">
+              <div class="swatch swatch-sm" style="background:#0b0f19;"></div>
+              <div class="swatch swatch-sm" style="background:#111827;"></div>
+              <div class="swatch swatch-sm" style="background:#1e293b;"></div>
+              <div class="swatch swatch-sm" style="background:#334155;"></div>
+              <div class="swatch swatch-sm" style="background:#94a3b8;"></div>
+              <div class="swatch swatch-sm" style="background:#f8fafc;"></div>
+            </div>
+            <div class="swatch-group">
+              <div class="swatch swatch-sm" style="background:#1e3a8a;"></div>
+              <div class="swatch swatch-sm" style="background:#2563eb;"></div>
+              <div class="swatch swatch-sm" style="background:#3b82f6;"></div>
+              <div class="swatch swatch-sm" style="background:#60a5fa;"></div>
+              <div class="swatch swatch-sm" style="background:#93c5fd;"></div>
+              <div class="swatch swatch-sm" style="background:#dbeafe;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         SLIDERS
+         ═══════════════════════════════════════════════ -->
+    <section id="sliders" class="ds-section">
+      <h2 class="ds-section-title">Sliders</h2>
+      <p class="ds-section-desc">Range sliders with live value display for customization controls.</p>
+
+      <div class="ds-component-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="ds-card">
+          <div class="ds-card-title">Brightness</div>
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">Background Brightness</span>
+              <span class="slider-value">-85%</span>
+            </div>
+            <input type="range" class="slider" min="0" max="100" value="15">
+          </div>
+          <div class="slider-group" style="margin-top: 24px;">
+            <div class="slider-header">
+              <span class="slider-label">Text Brightness</span>
+              <span class="slider-value">+90%</span>
+            </div>
+            <input type="range" class="slider" min="0" max="100" value="90">
+          </div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Contrast & Saturation</div>
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">Contrast</span>
+              <span class="slider-value">110%</span>
+            </div>
+            <input type="range" class="slider" min="0" max="100" value="55">
+          </div>
+          <div class="slider-group" style="margin-top: 24px;">
+            <div class="slider-header">
+              <span class="slider-label">Saturation</span>
+              <span class="slider-value">-20%</span>
+            </div>
+            <input type="range" class="slider" min="0" max="100" value="40">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         UPLOAD ZONE
+         ═══════════════════════════════════════════════ -->
+    <section id="upload" class="ds-section">
+      <h2 class="ds-section-title">Upload Zone</h2>
+      <p class="ds-section-desc">Drag-and-drop area with URL input fallback.</p>
+
+      <div class="ds-component-grid" style="grid-template-columns: 1fr 1fr;">
+        <div>
+          <h3 class="ds-subsection-title">Default State</h3>
+          <div class="upload-zone">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <div class="upload-title"><span>Click to upload</span> or drag and drop</div>
+            <div class="upload-hint">PNG, JPG, WebP up to 10MB</div>
+            <div class="upload-or">or</div>
+            <div style="display: flex; gap: 8px;">
+              <input class="input" type="text" placeholder="https://example.com" style="flex: 1;">
+              <button class="btn btn-primary btn-md">Capture</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="ds-subsection-title">Drag Over State</h3>
+          <div class="upload-zone drag-over">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <div class="upload-title">Drop your file here</div>
+            <div class="upload-hint">Release to upload</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         BEFORE/AFTER COMPARISON
+         ═══════════════════════════════════════════════ -->
+    <section id="comparison" class="ds-section">
+      <h2 class="ds-section-title">Before / After Comparison</h2>
+      <p class="ds-section-desc">Side-by-side panels showing light-to-dark transformation.</p>
+
+      <div class="comparison" style="margin-bottom: 32px;">
+        <div class="comparison-panel light">
+          <div class="comparison-label"><div class="dot"></div> BEFORE (Light Mode)</div>
+          <div class="mock-card">
+            <div class="mock-heading">Dashboard</div>
+            <div class="mock-text">Welcome back! Here's your overview.</div>
+            <div class="mock-btn">View Details</div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-heading">Recent Activity</div>
+            <div class="mock-text">3 new notifications</div>
+          </div>
+        </div>
+        <div class="comparison-panel dark">
+          <div class="comparison-label"><div class="dot"></div> AFTER (Dark Mode)</div>
+          <div class="mock-card">
+            <div class="mock-heading">Dashboard</div>
+            <div class="mock-text">Welcome back! Here's your overview.</div>
+            <div class="mock-btn">View Details</div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-heading">Recent Activity</div>
+            <div class="mock-text">3 new notifications</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         CONTRAST INDICATORS
+         ═══════════════════════════════════════════════ -->
+    <section id="contrast" class="ds-section">
+      <h2 class="ds-section-title">Contrast Indicators</h2>
+      <p class="ds-section-desc">APCA-validated contrast badges and detail cards.</p>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Badges</h3>
+        <div class="ds-component-row" style="margin-bottom: 24px;">
+          <span class="contrast-badge contrast-pass">
+            <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            APCA 87 - Pass
+          </span>
+          <span class="contrast-badge contrast-warn">
+            <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            APCA 52 - Warn
+          </span>
+          <span class="contrast-badge contrast-fail">
+            <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            APCA 28 - Fail
+          </span>
+        </div>
+
+        <h3 class="ds-subsection-title">Contrast Cards</h3>
+        <div class="ds-component-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div class="contrast-card">
+            <div class="contrast-preview" style="background: #0b0f19; color: #f8fafc;">Aa</div>
+            <div class="contrast-info">
+              <div class="contrast-ratio">Lc 97.4</div>
+              <div class="contrast-detail">#f8fafc on #0b0f19</div>
+              <span class="contrast-badge contrast-pass" style="margin-top: 6px; font-size: 0.6875rem;">Pass - Body Text</span>
+            </div>
+          </div>
+          <div class="contrast-card">
+            <div class="contrast-preview" style="background: #0b0f19; color: #94a3b8;">Aa</div>
+            <div class="contrast-info">
+              <div class="contrast-ratio">Lc 62.7</div>
+              <div class="contrast-detail">#94a3b8 on #0b0f19</div>
+              <span class="contrast-badge contrast-pass" style="margin-top: 6px; font-size: 0.6875rem;">Pass - Body Text</span>
+            </div>
+          </div>
+          <div class="contrast-card">
+            <div class="contrast-preview" style="background: #0b0f19; color: #475569;">Aa</div>
+            <div class="contrast-info">
+              <div class="contrast-ratio">Lc 33.1</div>
+              <div class="contrast-detail">#475569 on #0b0f19</div>
+              <span class="contrast-badge contrast-fail" style="margin-top: 6px; font-size: 0.6875rem;">Fail - Too Low</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Badges & Tags</h3>
+        <div class="ds-component-row">
+          <span class="badge badge-default">Default</span>
+          <span class="badge badge-primary">Primary</span>
+          <span class="badge badge-success">Accessible</span>
+          <span class="badge badge-error">Failed</span>
+          <span class="badge badge-warning">Review</span>
+        </div>
+      </div>
+
+      <div class="ds-subsection">
+        <h3 class="ds-subsection-title">Toggle Switch</h3>
+        <div class="ds-component-row">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="toggle"></button>
+            <span style="font-size: 0.875rem; color: var(--fg-secondary);">Off</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="toggle active"></button>
+            <span style="font-size: 0.875rem; color: var(--fg-primary);">On</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         EXPORT MODAL
+         ═══════════════════════════════════════════════ -->
+    <section id="modal" class="ds-section">
+      <h2 class="ds-section-title">Export Modal</h2>
+      <p class="ds-section-desc">Modal dialog for exporting dark mode as CSS, JSON, or PNG.</p>
+
+      <div class="modal-backdrop">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 class="modal-title">Export Dark Mode</h3>
+            <button class="modal-close">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="export-tabs">
+              <button class="export-tab active">CSS</button>
+              <button class="export-tab">JSON</button>
+              <button class="export-tab">PNG</button>
+            </div>
+            <div class="code-preview">
+              <span class="comment">/* Dark Mode Variables */</span><br>
+              <span class="keyword">:root</span> {<br>
+              &nbsp;&nbsp;<span class="prop">--bg-primary</span>: <span class="value">#0b0f19</span>;<br>
+              &nbsp;&nbsp;<span class="prop">--bg-secondary</span>: <span class="value">#111827</span>;<br>
+              &nbsp;&nbsp;<span class="prop">--fg-primary</span>: <span class="value">#f8fafc</span>;<br>
+              &nbsp;&nbsp;<span class="prop">--fg-secondary</span>: <span class="value">#94a3b8</span>;<br>
+              &nbsp;&nbsp;<span class="prop">--brand-primary</span>: <span class="value">#3b82f6</span>;<br>
+              }
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline btn-md">Cancel</button>
+            <button class="btn btn-primary btn-md">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width:16px;height:16px;"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z"/><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z"/></svg>
+              Download CSS
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         TOAST NOTIFICATIONS
+         ═══════════════════════════════════════════════ -->
+    <section id="toasts" class="ds-section">
+      <h2 class="ds-section-title">Toast Notifications</h2>
+      <p class="ds-section-desc">Non-blocking notifications for success, error, warning, and info states.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 400px;">
+        <div class="toast toast-success">
+          <svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <div class="toast-content">
+            <div class="toast-title">Export Complete</div>
+            <div class="toast-message">Your CSS file has been downloaded.</div>
+          </div>
+          <button class="toast-close"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>
+        </div>
+
+        <div class="toast toast-error">
+          <svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+          <div class="toast-content">
+            <div class="toast-title">Upload Failed</div>
+            <div class="toast-message">File exceeds 10MB limit. Try a smaller image.</div>
+          </div>
+          <button class="toast-close"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>
+        </div>
+
+        <div class="toast toast-warning">
+          <svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          <div class="toast-content">
+            <div class="toast-title">Low Contrast Detected</div>
+            <div class="toast-message">3 elements have APCA scores below 60.</div>
+          </div>
+          <button class="toast-close"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>
+        </div>
+
+        <div class="toast toast-info">
+          <svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+          <div class="toast-content">
+            <div class="toast-title">Processing Screenshot</div>
+            <div class="toast-message">Extracting colors from your website...</div>
+          </div>
+          <button class="toast-close"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════════════════════════════════════
+         RESPONSIVE SPECS
+         ═══════════════════════════════════════════════ -->
+    <section id="responsive" class="ds-section">
+      <h2 class="ds-section-title">Responsive Breakpoints</h2>
+      <p class="ds-section-desc">Mobile-first responsive design from 320px to 1440px.</p>
+
+      <div class="responsive-demo">
+        <div class="responsive-frame rf-mobile">
+          <div class="responsive-frame-header">
+            <span>Mobile</span>
+            <span>320px</span>
+          </div>
+          <div class="responsive-frame-body">
+            <div style="background: var(--brand-primary-bg); border-radius: var(--radius-md); padding: 8px; margin-bottom: 8px;">
+              <div style="font-size: 0.625rem; font-weight: 600;">Stack layout</div>
+              <div style="font-size: 0.5rem; color: var(--fg-tertiary);">Single column</div>
+            </div>
+            <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm); height: 20px; margin-bottom: 4px;"></div>
+            <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm); height: 20px; margin-bottom: 4px;"></div>
+            <div style="background: var(--brand-primary); border-radius: var(--radius-sm); height: 20px; width: 100%;"></div>
+          </div>
+        </div>
+
+        <div class="responsive-frame rf-tablet">
+          <div class="responsive-frame-header">
+            <span>Tablet</span>
+            <span>768px</span>
+          </div>
+          <div class="responsive-frame-body">
+            <div style="background: var(--brand-primary-bg); border-radius: var(--radius-md); padding: 8px; margin-bottom: 8px;">
+              <div style="font-size: 0.6875rem; font-weight: 600;">Side-by-side</div>
+              <div style="font-size: 0.5625rem; color: var(--fg-tertiary);">2-column comparison</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+              <div style="background: #fff; border-radius: var(--radius-sm); height: 40px;"></div>
+              <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm); height: 40px;"></div>
+            </div>
+            <div style="display: flex; gap: 4px; margin-top: 4px;">
+              <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm); height: 16px; flex: 1;"></div>
+              <div style="background: var(--brand-primary); border-radius: var(--radius-sm); height: 16px; width: 50px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="responsive-frame rf-desktop">
+          <div class="responsive-frame-header">
+            <span>Desktop</span>
+            <span>1280px</span>
+          </div>
+          <div class="responsive-frame-body">
+            <div style="background: var(--brand-primary-bg); border-radius: var(--radius-md); padding: 8px; margin-bottom: 8px;">
+              <div style="font-size: 0.75rem; font-weight: 600;">Full layout</div>
+              <div style="font-size: 0.625rem; color: var(--fg-tertiary);">3-panel: nav + comparison + controls</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 40px 1fr 80px; gap: 4px;">
+              <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm); height: 60px;"></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
+                <div style="background: #fff; border-radius: var(--radius-sm);"></div>
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm);"></div>
+              </div>
+              <div style="background: var(--bg-tertiary); border-radius: var(--radius-sm); height: 60px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
