@@ -6,6 +6,7 @@ import { ExportModal } from '../components/ExportModal';
 import { ContrastBadge } from '../components/ContrastBadge';
 import { AccessibilityPanel } from '../components/AccessibilityPanel';
 import { LivePreviewCompare } from '../components/LivePreviewCompare';
+import { ImagePreviewCompare } from '../components/ImagePreviewCompare';
 import { CSSEditor } from '../components/CSSEditor';
 import { Toast } from '../components/Toast';
 import { useDesignStore } from '../stores/designStore';
@@ -88,12 +89,13 @@ function MockUI({ palette, mode }: { palette: { bg: string; surface: string; tex
 
 export function Preview() {
   const navigate = useNavigate();
-  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation, sourceUrl } = useDesignStore();
+  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation, sourceUrl, imagePreview } = useDesignStore();
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
   const { user, loading: authLoading } = useAuth();
   
-  // Detect if source is URL extraction (not image upload)
+  // Detect source type
   const isURLSource = sourceUrl !== null;
+  const hasUploadedImage = imagePreview && !isURLSource;
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const [quickDownloaded, setQuickDownloaded] = useState(false);
@@ -246,7 +248,8 @@ export function Preview() {
         <div className={`grid gap-6 mb-8 ${showCSSEditor ? 'lg:grid-cols-[1fr,400px]' : 'grid-cols-1'}`}>
           {/* Preview section */}
           <div className="min-w-0">
-            {isURLSource && sourceUrl ? (
+            {/* URL source: Live website comparison */}
+            {isURLSource && sourceUrl && (
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-sm font-medium text-dark-300">Live Comparison</span>
@@ -257,7 +260,24 @@ export function Preview() {
                   darkCSS={customCSS || generateCSS(darkPalette)}
                 />
               </div>
-            ) : (
+            )}
+            
+            {/* Uploaded image: Image-based comparison */}
+            {hasUploadedImage && imagePreview && (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm font-medium text-dark-300">Your Design</span>
+                  <span className="text-xs text-dark-500">Drag slider to see dark mode</span>
+                </div>
+                <ImagePreviewCompare
+                  imageUrl={imagePreview}
+                  darkPalette={darkPalette}
+                />
+              </div>
+            )}
+            
+            {/* Fallback: Mock UI */}
+            {!isURLSource && !hasUploadedImage && (
               <div className="grid md:grid-cols-2 gap-6">
             <div
               ref={leftRef}
