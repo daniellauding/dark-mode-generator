@@ -34,6 +34,7 @@ interface DesignState {
   setStep: (step: AppStep) => void;
   setImage: (preview: string, name: string) => void;
   setPalette: (palette: DesignPalette) => void;
+  setDarkPalette: (palette: DarkPalette) => void;
   setExtractionData: (data: URLExtractionResult | null) => void;
   setPreset: (presetId: string) => void;
   setBgDarkness: (value: number) => void;
@@ -93,6 +94,8 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     const darkPalette = generateDarkPalette(palette, bgDarkness, textLightness, accentSaturation);
     set({ palette, darkPalette });
   },
+
+  setDarkPalette: (darkPalette) => set({ darkPalette, activePreset: 'custom' }),
 
   setExtractionData: (data) => set({ extractionData: data }),
 

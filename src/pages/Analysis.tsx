@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, AlertTriangle, Check } from 'lucide-react';
 import { Button } from '../components/Button';
@@ -5,12 +6,15 @@ import { ColorSwatch } from '../components/ColorSwatch';
 import { Slider } from '../components/Slider';
 import { PresetCard } from '../components/PresetCard';
 import { ContrastBadge } from '../components/ContrastBadge';
+import { AIEnhanceButton } from '../components/palette/AIEnhanceButton';
+import { AIEnhanceModal } from '../components/palette/AIEnhanceModal';
 import { useDesignStore } from '../stores/designStore';
 import { useContrastValidation } from '../hooks/useContrastValidation';
 import { PRESETS } from '../utils/colorConversion';
 
 export function Analysis() {
   const navigate = useNavigate();
+  const [showAIModal, setShowAIModal] = useState(false);
   const {
     palette,
     darkPalette,
@@ -22,6 +26,7 @@ export function Analysis() {
     setBgDarkness,
     setTextLightness,
     setAccentSaturation,
+    setDarkPalette,
     imageName,
     extractionData,
   } = useDesignStore();
@@ -48,6 +53,10 @@ export function Analysis() {
             <Button variant="secondary" onClick={() => navigate('/upload')} icon={<ArrowLeft size={16} />}>
               Back
             </Button>
+            <AIEnhanceButton
+              onClick={() => setShowAIModal(true)}
+              hasIssues={issues.length > 0}
+            />
             <Button onClick={() => navigate('/preview')} icon={<ArrowRight size={16} />}>
               Preview
             </Button>
@@ -282,6 +291,16 @@ export function Analysis() {
           </div>
         )}
       </div>
+
+      {/* AI Enhance Modal */}
+      {showAIModal && (
+        <AIEnhanceModal
+          darkPalette={darkPalette}
+          issues={issues.map(issue => `${issue.element}: Contrast too low (${issue.foreground} on ${issue.background}, Lc ${Math.abs(issue.apcaValue).toFixed(1)}, needs ${issue.minRequired})`)}
+          onApply={setDarkPalette}
+          onClose={() => setShowAIModal(false)}
+        />
+      )}
     </div>
   );
 }
