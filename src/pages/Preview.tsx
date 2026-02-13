@@ -1,11 +1,12 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, AlertTriangle, Check, Moon, Sun, FileDown, GitBranch, Save } from 'lucide-react';
+import { ArrowLeft, Download, AlertTriangle, Check, Moon, Sun, FileDown, GitBranch, Save, Code } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ExportModal } from '../components/ExportModal';
 import { ContrastBadge } from '../components/ContrastBadge';
 import { AccessibilityPanel } from '../components/AccessibilityPanel';
 import { LivePreviewCompare } from '../components/LivePreviewCompare';
+import { CSSEditor } from '../components/CSSEditor';
 import { Toast } from '../components/Toast';
 import { useDesignStore } from '../stores/designStore';
 import { useContrastValidation } from '../hooks/useContrastValidation';
@@ -101,6 +102,8 @@ export function Preview() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [iterationSavedToast, setIterationSavedToast] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
+  const [showCSSEditor, setShowCSSEditor] = useState(false);
+  const [customCSS, setCustomCSS] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -163,6 +166,14 @@ export function Preview() {
           <div className="flex gap-3">
             <Button variant="secondary" onClick={() => navigate('/analysis')} icon={<ArrowLeft size={16} />}>
               Customize
+            </Button>
+            <Button
+              variant={showCSSEditor ? 'primary' : 'ghost'}
+              onClick={() => setShowCSSEditor(!showCSSEditor)}
+              icon={<Code size={16} />}
+              title="CSS Editor (works without API key)"
+            >
+              CSS Editor
             </Button>
             <Button
               variant="ghost"
@@ -231,20 +242,23 @@ export function Preview() {
           <AccessibilityPanel />
         </div>
 
-        {/* Preview */}
-        {isURLSource && sourceUrl ? (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-medium text-dark-300">Live Comparison</span>
-              <span className="text-xs text-dark-500">Drag slider to compare</span>
-            </div>
-            <LivePreviewCompare
-              url={sourceUrl}
-              darkCSS={generateCSS(darkPalette)}
-            />
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+        {/* Main content grid: Preview + CSS Editor */}
+        <div className={`grid gap-6 mb-8 ${showCSSEditor ? 'lg:grid-cols-[1fr,400px]' : 'grid-cols-1'}`}>
+          {/* Preview section */}
+          <div className="min-w-0">
+            {isURLSource && sourceUrl ? (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm font-medium text-dark-300">Live Comparison</span>
+                  <span className="text-xs text-dark-500">Drag slider to compare</span>
+                </div>
+                <LivePreviewCompare
+                  url={sourceUrl}
+                  darkCSS={customCSS || generateCSS(darkPalette)}
+                />
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
             <div
               ref={leftRef}
               onScroll={() => handleScroll('left')}
@@ -268,7 +282,20 @@ export function Preview() {
               <MockUI palette={darkUI} mode="dark" />
             </div>
           </div>
-        )}
+            )}
+          </div>
+
+          {/* CSS Editor sidebar */}
+          {showCSSEditor && (
+            <div className="min-w-0 h-[600px]">
+              <CSSEditor
+                darkPalette={darkPalette}
+                generatedCSS={generateCSS(darkPalette)}
+                onCSSChange={setCustomCSS}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Contrast issues detail */}
         {issues.length > 0 && (
