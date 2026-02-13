@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { DesignPalette, DarkPalette, AppStep, BatchImage, ClipboardState, AccessibilityLevel } from '../types';
+import type { URLExtractionResult } from '../utils/extractFromURL';
 import { generateDarkPalette, generateSamplePalette, PRESETS, autoFixPalette, applyAPCAOptimizedPreset } from '../utils/colorConversion';
 
 interface DesignState {
@@ -13,6 +14,9 @@ interface DesignState {
   textLightness: number;
   accentSaturation: number;
   showExportModal: boolean;
+
+  // URL Extraction data (from AI)
+  extractionData: URLExtractionResult | null;
 
   // Accessibility state
   accessibilityLevel: AccessibilityLevel;
@@ -30,6 +34,7 @@ interface DesignState {
   setStep: (step: AppStep) => void;
   setImage: (preview: string, name: string) => void;
   setPalette: (palette: DesignPalette) => void;
+  setExtractionData: (data: URLExtractionResult | null) => void;
   setPreset: (presetId: string) => void;
   setBgDarkness: (value: number) => void;
   setTextLightness: (value: number) => void;
@@ -69,6 +74,8 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   accentSaturation: 80,
   showExportModal: false,
 
+  extractionData: null,
+
   accessibilityLevel: 'none' as AccessibilityLevel,
 
   batchImages: [],
@@ -86,6 +93,8 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     const darkPalette = generateDarkPalette(palette, bgDarkness, textLightness, accentSaturation);
     set({ palette, darkPalette });
   },
+
+  setExtractionData: (data) => set({ extractionData: data }),
 
   setPreset: (presetId) => {
     const preset = PRESETS.find(p => p.id === presetId);
@@ -163,6 +172,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     bgDarkness: 90,
     textLightness: 95,
     accentSaturation: 80,
+    extractionData: null,
     accessibilityLevel: 'none' as AccessibilityLevel,
     showExportModal: false,
     editingPaletteId: null,
