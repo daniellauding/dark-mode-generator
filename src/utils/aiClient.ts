@@ -261,12 +261,26 @@ export function loadAIConfig(): AIClientConfig | null {
     const defaultModels = {
       openai: 'gpt-4o',
       anthropic: 'claude-3-5-sonnet-20241022',
-      google: 'gemini-1.5-flash',
+      google: 'gemini-1.5-flash-latest',
     };
+    
+    // Map old model names to new ones
+    const modelMigration: Record<string, string> = {
+      'gemini-pro': 'gemini-1.5-flash-latest',
+      'gemini-1.5-flash': 'gemini-1.5-flash-latest',
+      'gemini-1.5-pro': 'gemini-1.5-pro-latest',
+    };
+    
+    let model = config.model || defaultModels[config.provider || 'openai'];
+    
+    // Migrate old model names
+    if (model && modelMigration[model]) {
+      model = modelMigration[model];
+    }
     
     const fullConfig: AIClientConfig = {
       provider: config.provider || 'openai',
-      model: config.model || defaultModels[config.provider || 'openai'],
+      model,
       apiKey: config.apiKey || '',
     };
     

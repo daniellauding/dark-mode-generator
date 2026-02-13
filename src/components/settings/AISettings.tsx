@@ -20,9 +20,8 @@ const MODELS = {
     { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus (most capable)' },
   ],
   google: [
-    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (recommended)' },
-    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
-    { id: 'gemini-pro', name: 'Gemini Pro' },
+    { id: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash (recommended)' },
+    { id: 'gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro' },
   ],
 };
 
