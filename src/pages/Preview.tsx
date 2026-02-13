@@ -87,12 +87,12 @@ function MockUI({ palette, mode }: { palette: { bg: string; surface: string; tex
 
 export function Preview() {
   const navigate = useNavigate();
-  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation, imagePreview, imageName } = useDesignStore();
+  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation, sourceUrl } = useDesignStore();
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
   const { user, loading: authLoading } = useAuth();
   
-  // Detect if source is URL vs image
-  const isURLSource = imagePreview?.startsWith('http') ?? false;
+  // Detect if source is URL extraction (not image upload)
+  const isURLSource = sourceUrl !== null;
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const [quickDownloaded, setQuickDownloaded] = useState(false);
@@ -232,14 +232,14 @@ export function Preview() {
         </div>
 
         {/* Preview */}
-        {isURLSource && imagePreview ? (
+        {isURLSource && sourceUrl ? (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-sm font-medium text-dark-300">Live Comparison</span>
               <span className="text-xs text-dark-500">Drag slider to compare</span>
             </div>
             <LivePreviewCompare
-              url={imagePreview}
+              url={sourceUrl}
               darkCSS={generateCSS(darkPalette)}
             />
           </div>

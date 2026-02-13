@@ -7,6 +7,7 @@ interface DesignState {
   step: AppStep;
   imagePreview: string | null;
   imageName: string | null;
+  sourceUrl: string | null; // Original URL when extracted from URL (not image)
   palette: DesignPalette | null;
   darkPalette: DarkPalette | null;
   activePreset: string;
@@ -33,6 +34,7 @@ interface DesignState {
 
   setStep: (step: AppStep) => void;
   setImage: (preview: string, name: string) => void;
+  setSourceUrl: (url: string | null) => void;
   setPalette: (palette: DesignPalette) => void;
   setDarkPalette: (palette: DarkPalette) => void;
   setExtractionData: (data: URLExtractionResult | null) => void;
@@ -67,6 +69,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   step: 'landing',
   imagePreview: null,
   imageName: null,
+  sourceUrl: null,
   palette: null,
   darkPalette: null,
   activePreset: 'midnight',
@@ -87,7 +90,9 @@ export const useDesignStore = create<DesignState>((set, get) => ({
 
   setStep: (step) => set({ step }),
 
-  setImage: (preview, name) => set({ imagePreview: preview, imageName: name }),
+  setImage: (preview, name) => set({ imagePreview: preview, imageName: name, sourceUrl: null }),
+
+  setSourceUrl: (url) => set({ sourceUrl: url }),
 
   setPalette: (palette) => {
     const { bgDarkness, textLightness, accentSaturation } = get();
@@ -169,6 +174,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     step: 'landing',
     imagePreview: null,
     imageName: null,
+    sourceUrl: null,
     palette: null,
     darkPalette: null,
     activePreset: 'midnight',

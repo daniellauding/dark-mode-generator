@@ -1,7 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Link, Loader2, Image, Clipboard, X, Images } from 'lucide-react';
+import { Upload, Link, Loader2, Image, Clipboard, X, Images, AlertTriangle } from 'lucide-react';
 import { Button } from './Button';
+import { aiClient } from '../utils/aiClient';
 
 interface UploadZoneProps {
   onFileUpload: (file: File) => void;
@@ -320,6 +321,25 @@ export function UploadZone({ onFileUpload, onUrlSubmit, onBatchUpload, isLoading
       {/* URL tab */}
       {activeTab === 'url' && (
         <div className="space-y-4">
+          {/* Warning if AI not configured */}
+          {!aiClient.isConfigured() && (
+            <div className="p-4 rounded-lg bg-warning/10 border border-warning/20 flex items-start gap-3">
+              <AlertTriangle size={20} className="text-warning shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="text-warning font-medium mb-1">AI not configured</p>
+                <p className="text-dark-300">
+                  Website color extraction requires an AI API key. Without it, you'll get a fallback palette.{' '}
+                  <a href="/settings" className="text-primary-400 hover:underline">
+                    Add API key in Settings →
+                  </a>
+                </p>
+                <p className="text-dark-500 mt-2 text-xs">
+                  💡 Tip: Upload a screenshot instead for color extraction without AI
+                </p>
+              </div>
+            </div>
+          )}
+          
           <div className="relative">
             <input
               type="url"

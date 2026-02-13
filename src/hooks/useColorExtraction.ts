@@ -8,6 +8,7 @@ import type { DesignPalette } from '../types';
 export function useColorExtraction() {
   const setPalette = useDesignStore(s => s.setPalette);
   const setStep = useDesignStore(s => s.setStep);
+  const setSourceUrl = useDesignStore(s => s.setSourceUrl);
   const setExtractionData = useDesignStore(s => s.setExtractionData);
 
   const extractFromImage = useCallback(async (imageUrl: string): Promise<DesignPalette> => {
@@ -34,9 +35,13 @@ export function useColorExtraction() {
       const isImage = imageExtensions.some(ext => url.toLowerCase().includes(ext));
 
       if (isImage) {
-        // Treat as image URL
+        // Treat as image URL - clear sourceUrl
+        setSourceUrl(null);
         return extractFromImage(url);
       }
+
+      // Store source URL for website extraction (for live preview comparison)
+      setSourceUrl(url);
 
       // Try AI-powered CSS extraction
       const { palette, extraction, error } = await extractFromURL(url);
@@ -55,12 +60,13 @@ export function useColorExtraction() {
       return palette;
     } catch (error) {
       console.warn('URL extraction failed, using sample palette:', error);
+      setSourceUrl(null);
       const palette = generateSamplePalette();
       setPalette(palette);
       setStep('analysis');
       return palette;
     }
-  }, [extractFromImage, setPalette, setStep, setExtractionData]);
+  }, [extractFromImage, setPalette, setStep, setSourceUrl, setExtractionData]);
 
   return { extractFromImage, extractFromUrl };
 }
