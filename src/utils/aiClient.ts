@@ -5,6 +5,7 @@
 
 interface AIClientConfig {
   provider: 'openai' | 'anthropic' | 'google';
+  model: string;
   apiKey: string;
 }
 
@@ -54,7 +55,7 @@ export class AIClient {
           Authorization: `Bearer ${this.config.apiKey}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: this.config.model || 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -111,7 +112,7 @@ export class AIClient {
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
+          model: this.config.model || 'claude-3-5-sonnet-20241022',
           max_tokens: 4096,
           messages: [
             {
@@ -163,8 +164,9 @@ export class AIClient {
     }
 
     try {
+      const model = this.config.model || 'gemini-1.5-flash';
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${this.config.apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.config.apiKey}`,
         {
           method: 'POST',
           headers: {
@@ -253,9 +255,23 @@ export function loadAIConfig(): AIClientConfig | null {
     const stored = localStorage.getItem('darkmode_ai_config');
     if (!stored) return null;
 
-    const config = JSON.parse(stored) as AIClientConfig;
-    aiClient.init(config);
-    return config;
+    const config = JSON.parse(stored) as Partial<AIClientConfig>;
+    
+    // Provide default model if not set (backward compatibility)
+    const defaultModels = {
+      openai: 'gpt-4o',
+      anthropic: 'claude-3-5-sonnet-20241022',
+      google: 'gemini-1.5-flash',
+    };
+    
+    const fullConfig: AIClientConfig = {
+      provider: config.provider || 'openai',
+      model: config.model || defaultModels[config.provider || 'openai'],
+      apiKey: config.apiKey || '',
+    };
+    
+    aiClient.init(fullConfig);
+    return fullConfig;
   } catch {
     return null;
   }
@@ -274,7 +290,7 @@ export function saveAIConfig(config: AIClientConfig): void {
  */
 export function clearAIConfig(): void {
   localStorage.removeItem('darkmode_ai_config');
-  aiClient.init({ provider: 'openai', apiKey: '' });
+  aiClient.init({ provider: 'openai', model: 'gpt-4o', apiKey: '' });
 }
 
 /**

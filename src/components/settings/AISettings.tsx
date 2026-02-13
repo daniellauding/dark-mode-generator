@@ -7,19 +7,46 @@ import {
   getAIUsage,
 } from '../../utils/aiClient';
 
+// Available models per provider
+const MODELS = {
+  openai: [
+    { id: 'gpt-4o', name: 'GPT-4o (recommended)' },
+    { id: 'gpt-4o-mini', name: 'GPT-4o Mini (faster, cheaper)' },
+    { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' },
+  ],
+  anthropic: [
+    { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet (recommended)' },
+    { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku (faster, cheaper)' },
+    { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus (most capable)' },
+  ],
+  google: [
+    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (recommended)' },
+    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+    { id: 'gemini-pro', name: 'Gemini Pro' },
+  ],
+};
+
 export default function AISettings() {
   const [provider, setProvider] = useState<'openai' | 'anthropic' | 'google'>('openai');
+  const [model, setModel] = useState('gpt-4o');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
   const [usage, setUsage] = useState(0);
 
+  // Update model when provider changes
+  useEffect(() => {
+    const defaultModel = MODELS[provider][0].id;
+    setModel(defaultModel);
+  }, [provider]);
+
   // Load config on mount
   useEffect(() => {
     const config = loadAIConfig();
     if (config) {
       setProvider(config.provider);
+      setModel(config.model || MODELS[config.provider][0].id);
       setApiKey(config.apiKey);
     }
     setUsage(getAIUsage());
@@ -32,7 +59,7 @@ export default function AISettings() {
       return;
     }
 
-    saveAIConfig({ provider, apiKey: apiKey.trim() });
+    saveAIConfig({ provider, model, apiKey: apiKey.trim() });
     setTestResult({ success: true, message: 'Settings saved!' });
     setTimeout(() => setTestResult(null), 3000);
   };
@@ -47,7 +74,7 @@ export default function AISettings() {
     setTestResult(null);
 
     // Temporarily init client with current settings
-    aiClient.init({ provider, apiKey: apiKey.trim() });
+    aiClient.init({ provider, model, apiKey: apiKey.trim() });
 
     const result = await aiClient.testConnection();
 
@@ -146,6 +173,24 @@ export default function AISettings() {
             </>
           )}
         </p>
+      </div>
+
+      {/* Model selection */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Model
+        </label>
+        <select
+          value={model}
+          onChange={e => setModel(e.target.value)}
+          className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+        >
+          {MODELS[provider].map(m => (
+            <option key={m.id} value={m.id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* API Key input */}
