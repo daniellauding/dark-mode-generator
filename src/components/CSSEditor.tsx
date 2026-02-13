@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Code, Copy, Check, RotateCcw, Sparkles } from 'lucide-react';
+import { Code, Copy, Check, RotateCcw, Sparkles, Pipette } from 'lucide-react';
+import { HexColorPicker } from 'react-colorful';
 import { Button } from './Button';
 import type { DarkPalette } from '../types';
 
@@ -13,6 +14,8 @@ export function CSSEditor({ darkPalette, onCSSChange, generatedCSS }: CSSEditorP
   const [css, setCSS] = useState(generatedCSS);
   const [copied, setCopied] = useState(false);
   const [hasEdits, setHasEdits] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState<number | null>(null);
+  const [pickerColor, setPickerColor] = useState('#ffffff');
 
   useEffect(() => {
     setCSS(generatedCSS);
@@ -34,6 +37,22 @@ export function CSSEditor({ darkPalette, onCSSChange, generatedCSS }: CSSEditorP
     navigator.clipboard.writeText(css);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleColorPick = (index: number, color: string) => {
+    setPickerOpen(index);
+    setPickerColor(color);
+  };
+
+  const handleColorChange = (newColor: string, index: number) => {
+    setPickerColor(newColor);
+    // Update CSS with new color
+    const colorName = darkPalette.colors[index].name.toLowerCase().replace(/\s+/g, '-');
+    const regex = new RegExp(`--color-${colorName}:\\s*#[0-9a-fA-F]{6}`, 'g');
+    const newCSS = css.includes(`--color-${colorName}`)
+      ? css.replace(regex, `--color-${colorName}: ${newColor}`)
+      : css + `\n  --color-${colorName}: ${newColor};`;
+    handleChange(newCSS);
   };
 
   return (
@@ -95,23 +114,62 @@ export function CSSEditor({ darkPalette, onCSSChange, generatedCSS }: CSSEditorP
 
       {/* Quick colors palette */}
       <div className="p-4 border-t border-dark-700">
-        <p className="text-xs text-dark-500 uppercase tracking-wider mb-2">Quick Insert</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs text-dark-500 uppercase tracking-wider">Palette Colors</p>
+          <p className="text-xs text-dark-600">Click to edit</p>
+        </div>
         <div className="grid grid-cols-4 gap-2">
           {darkPalette.colors.slice(0, 8).map((color, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                const newCSS = css + `\n  --color-${color.role}-${i}: ${color.hex};`;
-                handleChange(newCSS);
-              }}
-              className="group relative px-2 py-1.5 rounded-lg border border-dark-600 hover:border-primary-500 transition-all cursor-pointer"
-              style={{ backgroundColor: color.hex }}
-              title={`Insert ${color.name} (${color.hex})`}
-            >
-              <span className="text-[10px] font-mono text-white drop-shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                {color.hex}
-              </span>
-            </button>
+            <div key={i} className="relative">
+              <button
+                onClick={() => handleColorPick(i, color.hex)}
+                className="group relative w-full h-12 rounded-lg border border-dark-600 hover:border-primary-500 transition-all cursor-pointer"
+                style={{ backgroundColor: color.hex }}
+                title={`${color.name} (${color.hex})`}
+              >
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 rounded-lg">
+                  <Pipette size={16} className="text-white" />
+                </div>
+                <span className="absolute bottom-1 left-0 right-0 text-center text-[9px] font-mono text-white drop-shadow-md">
+                  {color.hex}
+                </span>
+              </button>
+              
+              {/* Color picker popover */}
+              {pickerOpen === i && (
+                <>
+                  {/* Backdrop */}
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setPickerOpen(null)}
+                  />
+                  {/* Popover */}
+                  <div className="absolute bottom-full left-0 mb-2 z-50 p-3 bg-dark-800 rounded-xl border border-dark-600 shadow-2xl">
+                    <div className="mb-2">
+                      <p className="text-xs text-dark-300 font-medium mb-1">{color.name}</p>
+                      <input
+                        type="text"
+                        value={pickerColor}
+                        onChange={e => handleColorChange(e.target.value, i)}
+                        className="w-full px-2 py-1 bg-dark-900 border border-dark-600 rounded text-dark-200 font-mono text-xs"
+                      />
+                    </div>
+                    <HexColorPicker 
+                      color={pickerColor} 
+                      onChange={newColor => handleColorChange(newColor, i)}
+                    />
+                    <div className="mt-2 flex justify-end">
+                      <Button 
+                        size="sm" 
+                        onClick={() => setPickerOpen(null)}
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           ))}
         </div>
       </div>
