@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, AlertTriangle, Check } from 'lucide-react';
+import { ArrowRight, ArrowLeft, AlertTriangle, Check, RotateCcw } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ColorSwatch } from '../components/ColorSwatch';
 import { Slider } from '../components/Slider';
@@ -30,6 +30,7 @@ export function Analysis() {
     setTextLightness,
     setAccentSaturation,
     setDarkPalette,
+    regenerateDark,
     imageName,
     extractionData,
   } = useDesignStore();
@@ -88,9 +89,22 @@ export function Analysis() {
           {/* Left: Original Palette */}
           <div className="space-y-6">
             <div className="p-6 rounded-2xl bg-dark-800/50 border border-dark-700">
-              <h2 className="text-sm font-semibold text-dark-300 uppercase tracking-wider mb-4">
-                Original Palette
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-dark-300 uppercase tracking-wider">
+                  Original Palette
+                </h2>
+                <span className="text-xs px-2 py-1 rounded-full bg-dark-700 text-dark-400">
+                  {palette.colors.length} colors
+                </span>
+              </div>
+              
+              {/* Info banner */}
+              <div className="mb-4 p-3 bg-dark-700/50 border border-dark-600 rounded-lg">
+                <p className="text-xs text-dark-400">
+                  Extracted from your image. These are the colors <strong>before</strong> dark mode conversion.
+                </p>
+              </div>
+              
               <div className="space-y-4">
                 {palette.colors.map((color, i) => (
                   <ColorSwatch key={i} hex={color.hex} name={color.name} role={color.role} size="md" />
@@ -102,9 +116,38 @@ export function Analysis() {
           {/* Center: Dark Palette */}
           <div className="space-y-6">
             <div className="p-6 rounded-2xl bg-dark-800/50 border border-dark-700">
-              <h2 className="text-sm font-semibold text-dark-300 uppercase tracking-wider mb-4">
-                Dark Mode Palette
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-dark-300 uppercase tracking-wider">
+                  Dark Mode Palette
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={regenerateDark}
+                  icon={<RotateCcw size={14} />}
+                  title="Regenerate dark palette with current settings"
+                >
+                  Regenerate
+                </Button>
+              </div>
+              
+              {/* Info banner with role explanations */}
+              <div className="mb-4 p-3 bg-primary-500/10 border border-primary-500/20 rounded-lg space-y-2">
+                <p className="text-xs text-dark-200 font-semibold">
+                  💡 Dark Mode Color Rules:
+                </p>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-dark-300">
+                  <div>• <strong>background:</strong> Very dark (#05...)</div>
+                  <div>• <strong>text:</strong> Very light (#EC... ✅)</div>
+                  <div>• <strong>surface:</strong> Slightly lighter</div>
+                  <div>• <strong>accent:</strong> Medium brightness</div>
+                  <div>• <strong>border:</strong> Subtle gray</div>
+                </div>
+                <p className="text-xs text-dark-400 pt-1 border-t border-primary-500/20">
+                  Light text (#EC..., #EF...) on dark backgrounds = <strong>correct!</strong>
+                </p>
+              </div>
+              
               <div className="space-y-4">
                 {darkPalette.colors.map((color, i) => (
                   <div
