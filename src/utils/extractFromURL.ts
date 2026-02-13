@@ -125,29 +125,47 @@ export async function extractFromURL(url: string): Promise<{
 
     // Convert extracted palette to DesignPalette format
     const palette: DesignPalette = {
-      original: {
-        background: extraction.palette.background ?? '#0a0a0a',
-        foreground: extraction.palette.foreground ?? '#e4e4e4',
-        primary: extraction.palette.primary ?? '#8b5cf6',
-        secondary: extraction.palette.secondary ?? '#06b6d4',
-        accent: extraction.palette.accent ?? '#f59e0b',
-        muted: extraction.palette.muted ?? '#1a1a1a',
-        border: extraction.palette.border ?? '#2a2a2a',
-      },
-      darkMode: {
-        background: extraction.palette.background ?? '#0a0a0a',
-        foreground: extraction.palette.foreground ?? '#e4e4e4',
-        primary: extraction.palette.primary ?? '#8b5cf6',
-        secondary: extraction.palette.secondary ?? '#06b6d4',
-        accent: extraction.palette.accent ?? '#f59e0b',
-        muted: extraction.palette.muted ?? '#1a1a1a',
-        border: extraction.palette.border ?? '#2a2a2a',
-      },
-      metadata: {
-        source: url,
-        extractedAt: new Date().toISOString(),
-        aiProvider: aiClient.getProvider() ?? 'unknown',
-      },
+      colors: [
+        {
+          hex: extraction.palette.background ?? '#0a0a0a',
+          name: 'Background',
+          area: 500,
+          role: 'background',
+        },
+        {
+          hex: extraction.palette.foreground ?? '#e4e4e4',
+          name: 'Text',
+          area: 300,
+          role: 'text',
+        },
+        {
+          hex: extraction.palette.primary ?? '#8b5cf6',
+          name: 'Primary',
+          area: 150,
+          role: 'accent',
+        },
+        {
+          hex: extraction.palette.secondary ?? '#06b6d4',
+          name: 'Secondary',
+          area: 100,
+          role: 'accent',
+        },
+        {
+          hex: extraction.palette.border ?? '#2a2a2a',
+          name: 'Border',
+          area: 50,
+          role: 'border',
+        },
+        {
+          hex: extraction.palette.muted ?? '#1a1a1a',
+          name: 'Surface',
+          area: 200,
+          role: 'surface',
+        },
+      ],
+      dominantColor: extraction.palette.primary ?? '#8b5cf6',
+      backgroundColor: extraction.palette.background ?? '#0a0a0a',
+      textColor: extraction.palette.foreground ?? '#e4e4e4',
     };
 
     return { palette, extraction };
@@ -165,23 +183,16 @@ export async function extractFromURL(url: string): Promise<{
  */
 function createFallbackPalette(): DesignPalette {
   return {
-    original: {
-      background: '#121212',
-      foreground: '#e4e4e4',
-      primary: '#8b5cf6',
-      secondary: '#06b6d4',
-      accent: '#f59e0b',
-      muted: '#1a1a1a',
-      border: '#2a2a2a',
-    },
-    darkMode: {
-      background: '#0a0a0a',
-      foreground: '#e4e4e4',
-      primary: '#8b5cf6',
-      secondary: '#06b6d4',
-      accent: '#f59e0b',
-      muted: '#121212',
-      border: '#2a2a2a',
-    },
+    colors: [
+      { hex: '#0a0a0a', name: 'Background', area: 500, role: 'background' },
+      { hex: '#e4e4e4', name: 'Text', area: 300, role: 'text' },
+      { hex: '#8b5cf6', name: 'Primary', area: 150, role: 'accent' },
+      { hex: '#06b6d4', name: 'Secondary', area: 100, role: 'accent' },
+      { hex: '#2a2a2a', name: 'Border', area: 50, role: 'border' },
+      { hex: '#1a1a1a', name: 'Surface', area: 200, role: 'surface' },
+    ],
+    dominantColor: '#8b5cf6',
+    backgroundColor: '#0a0a0a',
+    textColor: '#e4e4e4',
   };
 }
