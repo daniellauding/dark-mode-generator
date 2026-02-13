@@ -18,7 +18,7 @@ export function Upload() {
       setImage(dataUrl, file.name);
       await extractFromImage(dataUrl);
       setIsLoading(false);
-      navigate('/analysis');
+      navigate('/preview');
     };
     reader.readAsDataURL(file);
   };
@@ -28,7 +28,7 @@ export function Upload() {
     setImage(url, url);
     await extractFromUrl(url);
     setIsLoading(false);
-    navigate('/analysis');
+    navigate('/preview');
   };
 
   return (

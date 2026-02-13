@@ -16,14 +16,14 @@ export function useColorExtraction() {
       // Try real color extraction
       const palette = await extractColorsFromImage(imageUrl);
       setPalette(palette);
-      setStep('analysis');
+      setStep('preview');
       return palette;
     } catch (error) {
       console.warn('Color extraction failed, using sample palette:', error);
       // Fallback to sample palette if extraction fails
       const palette = generateSamplePalette();
       setPalette(palette);
-      setStep('analysis');
+      setStep('preview');
       return palette;
     }
   }, [setPalette, setStep]);
@@ -56,14 +56,14 @@ export function useColorExtraction() {
       }
 
       setPalette(palette);
-      setStep('analysis');
+      setStep('preview');
       return palette;
     } catch (error) {
       console.warn('URL extraction failed, using sample palette:', error);
       setSourceUrl(null);
       const palette = generateSamplePalette();
       setPalette(palette);
-      setStep('analysis');
+      setStep('preview');
       return palette;
     }
   }, [extractFromImage, setPalette, setStep, setSourceUrl, setExtractionData]);
