@@ -23,6 +23,7 @@ export function Analysis() {
     setTextLightness,
     setAccentSaturation,
     imageName,
+    extractionData,
   } = useDesignStore();
 
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
@@ -167,6 +168,119 @@ export function Analysis() {
             </div>
           </div>
         </div>
+
+        {/* AI Extraction Data (if available) */}
+        {extractionData && (
+          <div className="mt-8 p-6 rounded-2xl bg-dark-800/50 border border-dark-700">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">🤖</span>
+              <h2 className="text-lg font-semibold text-dark-100">AI Extraction Results</h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* CSS Variables */}
+              {extractionData.cssVariables && (
+                <div>
+                  <h3 className="text-sm font-medium text-dark-300 mb-2">CSS Variables</h3>
+                  <pre className="p-4 rounded-lg bg-dark-900 text-dark-200 text-xs overflow-x-auto border border-dark-700">
+                    {extractionData.cssVariables}
+                  </pre>
+                </div>
+              )}
+
+              {/* Tailwind Config */}
+              {extractionData.tailwindConfig && (
+                <div>
+                  <h3 className="text-sm font-medium text-dark-300 mb-2">Tailwind Config</h3>
+                  <pre className="p-4 rounded-lg bg-dark-900 text-dark-200 text-xs overflow-x-auto border border-dark-700">
+                    {extractionData.tailwindConfig}
+                  </pre>
+                </div>
+              )}
+
+              {/* Design System */}
+              {extractionData.designSystem && (
+                <div>
+                  <h3 className="text-sm font-medium text-dark-300 mb-2">Design System</h3>
+                  <div className="p-4 rounded-lg bg-dark-900 border border-dark-700 space-y-2 text-sm">
+                    {extractionData.designSystem.grid && (
+                      <div>
+                        <span className="text-dark-500">Grid:</span>{' '}
+                        <span className="text-dark-200">{extractionData.designSystem.grid}</span>
+                      </div>
+                    )}
+                    {extractionData.designSystem.typography && (
+                      <div>
+                        <span className="text-dark-500">Typography:</span>{' '}
+                        <span className="text-dark-200">{extractionData.designSystem.typography.join(', ')}</span>
+                      </div>
+                    )}
+                    {extractionData.designSystem.spacing && (
+                      <div>
+                        <span className="text-dark-500">Spacing:</span>{' '}
+                        <span className="text-dark-200">{extractionData.designSystem.spacing.join(', ')}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* WCAG Compliance */}
+              {extractionData.wcag && (
+                <div>
+                  <h3 className="text-sm font-medium text-dark-300 mb-2">WCAG Compliance</h3>
+                  <div className="p-4 rounded-lg bg-dark-900 border border-dark-700">
+                    <div className="flex items-center gap-2 mb-2">
+                      {extractionData.wcag.compliant ? (
+                        <>
+                          <Check size={16} className="text-green-500" />
+                          <span className="text-sm text-green-400">Compliant</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertTriangle size={16} className="text-yellow-500" />
+                          <span className="text-sm text-yellow-400">Issues Found</span>
+                        </>
+                      )}
+                    </div>
+                    {extractionData.wcag.issues && extractionData.wcag.issues.length > 0 && (
+                      <ul className="space-y-1 mt-2">
+                        {extractionData.wcag.issues.map((issue, i) => (
+                          <li key={i} className="text-xs text-dark-400">• {issue}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Implementation Notes */}
+              {extractionData.implementationNotes && (
+                <div className="md:col-span-2">
+                  <h3 className="text-sm font-medium text-dark-300 mb-2">Implementation Notes</h3>
+                  <div className="p-4 rounded-lg bg-dark-900 text-dark-200 text-sm border border-dark-700">
+                    {extractionData.implementationNotes}
+                  </div>
+                </div>
+              )}
+
+              {/* Best Practices */}
+              {extractionData.bestPractices && extractionData.bestPractices.length > 0 && (
+                <div className="md:col-span-2">
+                  <h3 className="text-sm font-medium text-dark-300 mb-2">Best Practices Used</h3>
+                  <ul className="grid md:grid-cols-2 gap-2">
+                    {extractionData.bestPractices.map((practice, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-dark-300">
+                        <Check size={14} className="text-green-500 mt-0.5 shrink-0" />
+                        <span>{practice}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
