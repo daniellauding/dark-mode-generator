@@ -1,11 +1,16 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, AlertTriangle, Check, Moon, Sun, FileDown } from 'lucide-react';
+import { ArrowLeft, Download, AlertTriangle, Check, Moon, Sun, FileDown, GitBranch, Save } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ExportModal } from '../components/ExportModal';
 import { ContrastBadge } from '../components/ContrastBadge';
+import { AccessibilityPanel } from '../components/AccessibilityPanel';
+import { Toast } from '../components/Toast';
 import { useDesignStore } from '../stores/designStore';
 import { useContrastValidation } from '../hooks/useContrastValidation';
+import { useAuth } from '../hooks/useAuth';
+import { AddIterationModal } from '../components/palette/AddIterationModal';
+import { SavePaletteModal } from '../components/palette/SavePaletteModal';
 import { generateCSS, downloadFile } from '../utils/exportFormats';
 
 function MockUI({ palette, mode }: { palette: { bg: string; surface: string; text: string; accent: string; border: string; muted: string }; mode: string }) {
@@ -81,11 +86,27 @@ function MockUI({ palette, mode }: { palette: { bg: string; surface: string; tex
 
 export function Preview() {
   const navigate = useNavigate();
-  const { palette, darkPalette, showExportModal, setShowExportModal } = useDesignStore();
+  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation } = useDesignStore();
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
+  const { user, loading: authLoading } = useAuth();
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const [quickDownloaded, setQuickDownloaded] = useState(false);
+  const [showSignupToast, setShowSignupToast] = useState(false);
+  const [showIterationModal, setShowIterationModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [iterationSavedToast, setIterationSavedToast] = useState(false);
+  const [savedToast, setSavedToast] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      const dismissed = sessionStorage.getItem('signup-toast-dismissed');
+      if (!dismissed) {
+        const timer = setTimeout(() => setShowSignupToast(true), 2000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [authLoading, user]);
 
   const handleQuickDownload = useCallback(() => {
     if (!darkPalette) return;
@@ -150,6 +171,24 @@ export function Preview() {
             <Button onClick={() => setShowExportModal(true)} icon={<Download size={16} />}>
               Export
             </Button>
+            {user && (
+              <Button
+                variant="secondary"
+                onClick={() => setShowSaveModal(true)}
+                icon={<Save size={16} />}
+              >
+                Save
+              </Button>
+            )}
+            {user && editingPaletteId && (
+              <Button
+                variant="secondary"
+                onClick={() => setShowIterationModal(true)}
+                icon={<GitBranch size={16} />}
+              >
+                Save Iteration
+              </Button>
+            )}
           </div>
         </div>
 
@@ -181,6 +220,11 @@ export function Preview() {
               />
             </div>
           </div>
+        </div>
+
+        {/* Accessibility panel */}
+        <div className="mb-6">
+          <AccessibilityPanel />
         </div>
 
         {/* Side by side preview */}
@@ -240,6 +284,54 @@ export function Preview() {
 
       {showExportModal && darkPalette && (
         <ExportModal palette={darkPalette} onClose={() => setShowExportModal(false)} />
+      )}
+
+      {showIterationModal && editingPaletteId && (
+        <AddIterationModal
+          paletteId={editingPaletteId}
+          onClose={() => setShowIterationModal(false)}
+          onSaved={() => setIterationSavedToast(true)}
+        />
+      )}
+
+      {iterationSavedToast && (
+        <Toast
+          message="Iteration saved successfully"
+          onDismiss={() => setIterationSavedToast(false)}
+          duration={3000}
+        />
+      )}
+
+      {showSaveModal && palette && darkPalette && (
+        <SavePaletteModal
+          lightPalette={palette}
+          darkPalette={darkPalette}
+          preset={activePreset}
+          bgDarkness={bgDarkness}
+          textLightness={textLightness}
+          accentSaturation={accentSaturation}
+          onClose={() => setShowSaveModal(false)}
+          onSaved={() => setSavedToast(true)}
+        />
+      )}
+
+      {savedToast && (
+        <Toast
+          message="Palette saved to your library!"
+          onDismiss={() => setSavedToast(false)}
+          duration={3000}
+        />
+      )}
+
+      {showSignupToast && (
+        <Toast
+          message="Sign up to save this palette"
+          action={{ label: 'Sign up', onClick: () => navigate('/?signup=1') }}
+          onDismiss={() => {
+            setShowSignupToast(false);
+            sessionStorage.setItem('signup-toast-dismissed', '1');
+          }}
+        />
       )}
     </div>
   );

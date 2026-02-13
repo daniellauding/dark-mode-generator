@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { DesignPalette, DarkPalette, AppStep, BatchImage, ClipboardState } from '../types';
-import { generateDarkPalette, generateSamplePalette, PRESETS } from '../utils/colorConversion';
+import type { DesignPalette, DarkPalette, AppStep, BatchImage, ClipboardState, AccessibilityLevel } from '../types';
+import { generateDarkPalette, generateSamplePalette, PRESETS, autoFixPalette, applyAPCAOptimizedPreset } from '../utils/colorConversion';
 
 interface DesignState {
   step: AppStep;
@@ -14,12 +14,18 @@ interface DesignState {
   accentSaturation: number;
   showExportModal: boolean;
 
+  // Accessibility state
+  accessibilityLevel: AccessibilityLevel;
+
   // Batch state
   batchImages: BatchImage[];
   batchMode: boolean;
 
   // Clipboard state
   clipboard: ClipboardState;
+
+  // Editing state (when loading from library)
+  editingPaletteId: string | null;
 
   setStep: (step: AppStep) => void;
   setImage: (preview: string, name: string) => void;
@@ -33,6 +39,10 @@ interface DesignState {
   loadSample: () => void;
   reset: () => void;
 
+  // Accessibility actions
+  setAccessibilityLevel: (level: AccessibilityLevel) => void;
+  applyAutoFix: () => void;
+
   // Batch actions
   addBatchImages: (images: BatchImage[]) => void;
   removeBatchImage: (id: string) => void;
@@ -42,6 +52,9 @@ interface DesignState {
 
   // Clipboard actions
   setClipboard: (state: Partial<ClipboardState>) => void;
+
+  // Editing actions
+  setEditingPaletteId: (id: string | null) => void;
 }
 
 export const useDesignStore = create<DesignState>((set, get) => ({
@@ -56,9 +69,13 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   accentSaturation: 80,
   showExportModal: false,
 
+  accessibilityLevel: 'none' as AccessibilityLevel,
+
   batchImages: [],
   batchMode: false,
   clipboard: { hasImage: false, isReading: false, error: null },
+
+  editingPaletteId: null,
 
   setStep: (step) => set({ step }),
 
@@ -119,6 +136,23 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     });
   },
 
+  setAccessibilityLevel: (level) => {
+    set({ accessibilityLevel: level });
+    if (level === 'apca-optimized') {
+      const { palette } = get();
+      if (!palette) return;
+      const darkPalette = applyAPCAOptimizedPreset(palette);
+      set({ darkPalette });
+    }
+  },
+
+  applyAutoFix: () => {
+    const { darkPalette, accessibilityLevel, palette } = get();
+    if (!darkPalette || !palette || accessibilityLevel === 'none') return;
+    const fixed = autoFixPalette(darkPalette, accessibilityLevel, palette);
+    set({ darkPalette: fixed });
+  },
+
   reset: () => set({
     step: 'landing',
     imagePreview: null,
@@ -129,7 +163,9 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     bgDarkness: 90,
     textLightness: 95,
     accentSaturation: 80,
+    accessibilityLevel: 'none' as AccessibilityLevel,
     showExportModal: false,
+    editingPaletteId: null,
     batchImages: [],
     batchMode: false,
     clipboard: { hasImage: false, isReading: false, error: null },
@@ -158,4 +194,6 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   setClipboard: (state) => set(s => ({
     clipboard: { ...s.clipboard, ...state },
   })),
+
+  setEditingPaletteId: (id) => set({ editingPaletteId: id }),
 }));

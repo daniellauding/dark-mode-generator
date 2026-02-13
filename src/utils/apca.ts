@@ -64,3 +64,53 @@ export function getMinContrast(textSize: 'body' | 'large' | 'small'): number {
     case 'small': return 75;
   }
 }
+
+// WCAG 2.1 contrast ratio using chroma.js
+export function calcWCAGContrast(fg: string, bg: string): number {
+  return chroma.contrast(fg, bg);
+}
+
+// Adjust a foreground color's lightness until it meets the target WCAG contrast ratio against bg
+export function adjustForWCAGContrast(fgHex: string, bgHex: string, targetRatio: number): string {
+  const bgLum = chroma(bgHex).luminance();
+  const isDarkBg = bgLum < 0.5;
+  let color = chroma(fgHex);
+
+  // Try adjusting lightness in steps
+  for (let i = 0; i < 100; i++) {
+    const ratio = chroma.contrast(color.hex(), bgHex);
+    if (ratio >= targetRatio) return color.hex();
+
+    const [h, s, l] = color.hsl();
+    if (isDarkBg) {
+      // Lighten text on dark backgrounds
+      color = chroma.hsl(h || 0, s, Math.min(1, l + 0.01));
+    } else {
+      // Darken text on light backgrounds
+      color = chroma.hsl(h || 0, s, Math.max(0, l - 0.01));
+    }
+  }
+
+  return color.hex();
+}
+
+// Adjust a foreground color's lightness until it meets the target APCA Lc value against bg
+export function adjustForAPCAContrast(fgHex: string, bgHex: string, targetLc: number): string {
+  let color = chroma(fgHex);
+  const bgLum = chroma(bgHex).luminance();
+  const isDarkBg = bgLum < 0.5;
+
+  for (let i = 0; i < 100; i++) {
+    const lc = Math.abs(calcAPCA(color.hex(), bgHex));
+    if (lc >= targetLc) return color.hex();
+
+    const [h, s, l] = color.hsl();
+    if (isDarkBg) {
+      color = chroma.hsl(h || 0, s, Math.min(1, l + 0.01));
+    } else {
+      color = chroma.hsl(h || 0, s, Math.max(0, l - 0.01));
+    }
+  }
+
+  return color.hex();
+}

@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth !== null && $uid === auth.uid",
+        ".write": "auth !== null && $uid === auth.uid"
+      }
+    },
+    "palettes": {
+      "$paletteId": {
+        ".read": "data.child('privacy').val() === 'public' || (auth !== null && data.child('userId').val() === auth.uid) || (auth !== null && data.child('sharedWith').child(auth.uid).exists())",
+        ".write": "(auth !== null && !data.exists()) || (auth !== null && data.child('userId').val() === auth.uid) || (auth !== null && data.child('sharedWith').child(auth.uid).exists())"
+      }
+    },
+    "shares": {
+      "$shareId": {
+        ".read": true,
+        ".write": "auth !== null"
+      }
+    },
+    "iterations": {
+      "$iterationId": {
+        ".read": true,
+        ".write": "auth !== null"
+      }
+    }
+  }
+}

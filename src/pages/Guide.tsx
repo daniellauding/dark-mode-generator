@@ -1,15 +1,25 @@
+import { useMemo } from 'react';
 import { BookOpen, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import guideContent from '../../DARK-MODE-GUIDE.md?raw';
+import { ColorComparison } from '../components/guide/ColorComparison';
 
 export function Guide() {
   const navigate = useNavigate();
 
+  // Split content at "## Contrast & Accessibility" so we can inject the interactive section after Color Fundamentals
+  const [beforeInteractive, afterInteractive] = useMemo(() => {
+    const marker = '## Contrast & Accessibility';
+    const idx = guideContent.indexOf(marker);
+    if (idx === -1) return [guideContent, ''];
+    return [guideContent.slice(0, idx), guideContent.slice(idx)];
+  }, []);
+
   return (
     <div className="min-h-screen pt-20 pb-16">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Back button */}
         <button
           onClick={() => navigate('/')}
@@ -30,10 +40,20 @@ export function Guide() {
           </div>
         </div>
 
-        {/* Markdown content */}
+        {/* Part 1: Color Fundamentals */}
         <article className="guide-prose">
           <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
-            {guideContent}
+            {beforeInteractive}
+          </ReactMarkdown>
+        </article>
+
+        {/* Interactive color comparison */}
+        <ColorComparison />
+
+        {/* Part 2: Rest of the guide */}
+        <article className="guide-prose">
+          <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+            {afterInteractive}
           </ReactMarkdown>
         </article>
       </div>
