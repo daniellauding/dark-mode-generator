@@ -14,34 +14,28 @@ interface ImagePreviewCompareProps {
 export function ImagePreviewCompare({ imageUrl, darkPalette }: ImagePreviewCompareProps) {
   // Create CSS filter approximation from dark palette
   const bgColor = darkPalette.backgroundColor;
-  const textColor = darkPalette.textColor;
-  
-  // Calculate inversion needed
-  const shouldInvert = parseInt(bgColor.slice(1, 3), 16) < 128;
   
   return (
     <div className="w-full rounded-2xl overflow-hidden border border-dark-600 bg-dark-900 relative">
       <ReactCompareSlider
         itemOne={
-          <div className="w-full h-full relative">
+          <div className="w-full h-full relative bg-white">
             <img
               src={imageUrl}
               alt="Original design"
-              className="w-full h-full object-contain bg-white"
+              className="w-full h-full object-contain"
             />
           </div>
         }
         itemTwo={
-          <div className="w-full h-full relative">
+          <div className="w-full h-full relative" style={{ backgroundColor: bgColor }}>
             <img
               src={imageUrl}
               alt="Dark mode simulation"
               className="w-full h-full object-contain"
               style={{
-                backgroundColor: bgColor,
-                filter: shouldInvert 
-                  ? 'invert(1) hue-rotate(180deg) brightness(0.9) contrast(1.1)'
-                  : 'brightness(0.8) contrast(1.2)',
+                filter: 'invert(0.95) hue-rotate(180deg) brightness(1.1) saturate(0.8)',
+                mixBlendMode: 'normal',
               }}
             />
           </div>
