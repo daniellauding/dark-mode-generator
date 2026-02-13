@@ -9,6 +9,7 @@ import { Library } from './pages/Library';
 import { Projects } from './pages/Projects';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { PublicPalette } from './pages/PublicPalette';
+import Settings from './pages/Settings';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:projectId" element={<ProjectDetail />} />
         <Route path="/palette/:shareId" element={<PublicPalette />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </>
   );

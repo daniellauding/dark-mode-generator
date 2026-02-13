@@ -74,7 +74,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               My Library
             </button>
             <button
-              onClick={() => { setOpen(false); }}
+              onClick={() => { setOpen(false); navigate('/settings'); }}
               className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-dark-300 hover:text-dark-100 hover:bg-dark-700 transition-colors cursor-pointer"
               role="menuitem"
             >
