@@ -15,6 +15,7 @@ import {
 import { Button } from '../components/Button';
 import { Toast } from '../components/Toast';
 import { ShareModal } from '../components/palette/ShareModal';
+import { DeleteConfirmModal } from '../components/palette/DeleteConfirmModal';
 import { IterationTimeline } from '../components/palette/IterationTimeline';
 import { useAuth } from '../hooks/useAuth';
 import { usePermissions } from '../hooks/usePermissions';
@@ -22,7 +23,6 @@ import { useDesignStore } from '../stores/designStore';
 import {
   loadPalettes,
   getSharedPalettes,
-  deletePalette,
   type SavedPalette,
 } from '../firebase/database';
 import type { Iteration } from '../types';
@@ -44,18 +44,6 @@ function PaletteCard({
 }) {
   const { user } = useAuth();
   const { canDelete, canShare } = usePermissions(palette, user?.uid ?? null);
-  const [deleting, setDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    if (!palette.id || !canDelete) return;
-    setDeleting(true);
-    try {
-      await deletePalette(palette.id);
-      onDelete?.();
-    } finally {
-      setDeleting(false);
-    }
-  };
 
   const colors = palette.darkPalette?.colors?.slice(0, 5) ?? [];
 
@@ -100,7 +88,7 @@ function PaletteCard({
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {canShare && (
               <button
-                onClick={onShare}
+                onClick={(e) => { e.stopPropagation(); onShare?.(); }}
                 className="p-1.5 rounded-md hover:bg-dark-700 text-dark-400 hover:text-primary-400 transition-colors cursor-pointer"
                 title="Share"
               >
@@ -109,12 +97,11 @@ function PaletteCard({
             )}
             {canDelete && (
               <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="p-1.5 rounded-md hover:bg-danger/10 text-dark-400 hover:text-danger transition-colors cursor-pointer disabled:opacity-50"
+                onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+                className="p-1.5 rounded-md hover:bg-danger/10 text-dark-400 hover:text-danger transition-colors cursor-pointer"
                 title="Delete"
               >
-                {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                <Trash2 size={14} />
               </button>
             )}
           </div>
@@ -139,6 +126,7 @@ export function Library() {
   const [sharedPalettes, setSharedPalettes] = useState<SavedPalette[]>([]);
   const [loading, setLoading] = useState(true);
   const [shareTarget, setShareTarget] = useState<SavedPalette | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SavedPalette | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<SavedPalette | null>(null);
   const [detailTab, setDetailTab] = useState<'colors' | 'iterations'>('colors');
   const [loadedToast, setLoadedToast] = useState<string | null>(null);
@@ -425,7 +413,7 @@ export function Library() {
                 palette={p}
                 isShared={tab === 'shared'}
                 onShare={() => setShareTarget(p)}
-                onDelete={loadData}
+                onDelete={() => setDeleteTarget(p)}
                 onClick={() => setSelectedPalette(p)}
               />
             ))}
@@ -438,6 +426,15 @@ export function Library() {
           palette={shareTarget}
           onClose={() => setShareTarget(null)}
           onUpdated={loadData}
+        />
+      )}
+
+      {deleteTarget && deleteTarget.id && (
+        <DeleteConfirmModal
+          paletteId={deleteTarget.id}
+          paletteName={deleteTarget.name}
+          onClose={() => setDeleteTarget(null)}
+          onDeleted={loadData}
         />
       )}
     </div>

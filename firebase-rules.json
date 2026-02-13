@@ -15,13 +15,13 @@
     "shares": {
       "$shareId": {
         ".read": true,
-        ".write": "auth !== null"
+        ".write": "auth !== null && (!data.exists() || root.child('palettes').child(data.child('paletteId').val()).child('userId').val() === auth.uid)"
       }
     },
     "iterations": {
       "$iterationId": {
         ".read": true,
-        ".write": "auth !== null"
+        ".write": "auth !== null && (!data.exists() || root.child('palettes').child(data.child('paletteId').val()).child('userId').val() === auth.uid || root.child('palettes').child(data.child('paletteId').val()).child('sharedWith').child(auth.uid).exists())"
       }
     }
   }
