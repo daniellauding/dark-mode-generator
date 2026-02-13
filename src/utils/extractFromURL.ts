@@ -96,17 +96,21 @@ export async function extractFromURL(url: string): Promise<{
 
   try {
     // Fetch website
+    console.log(`[extractFromURL] Fetching ${url}...`);
     const { html, css } = await fetchWebsite(url);
+    console.log(`[extractFromURL] Got ${html.length} bytes HTML, ${css.length} bytes CSS`);
 
     if (!css || css.trim().length === 0) {
+      console.warn('[extractFromURL] No CSS found - CORS may be blocking');
       return {
         palette: createFallbackPalette(),
         extraction: null,
-        error: 'No CSS found. The website may block CORS requests. Try uploading a screenshot instead.',
+        error: '⚠️ No CSS found. The website blocks cross-origin requests (CORS). Try uploading a screenshot instead.',
       };
     }
 
     // Create AI prompt
+    console.log('[extractFromURL] Calling AI to extract colors...');
     const prompt = createExtractURLPrompt(url, html, css);
 
     // Call AI
@@ -114,12 +118,15 @@ export async function extractFromURL(url: string): Promise<{
     const result = await aiClient.call(prompt);
 
     if (!result.success || !result.data) {
+      console.error('[extractFromURL] AI extraction failed:', result.error);
       return {
         palette: createFallbackPalette(),
         extraction: null,
-        error: result.error ?? 'AI extraction failed',
+        error: `❌ AI extraction failed: ${result.error}`,
       };
     }
+
+    console.log('[extractFromURL] Success! Extracted palette:', result.data.palette);
 
     const extraction = result.data as URLExtractionResult;
 

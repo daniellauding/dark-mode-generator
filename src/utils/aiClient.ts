@@ -4,7 +4,7 @@
  */
 
 interface AIClientConfig {
-  provider: 'openai' | 'anthropic';
+  provider: 'openai' | 'anthropic' | 'google';
   apiKey: string;
 }
 
@@ -155,6 +155,65 @@ export class AIClient {
   }
 
   /**
+   * Call Google Gemini API
+   */
+  private async callGoogle(prompt: string): Promise<AIResponse> {
+    if (!this.config) {
+      return { success: false, error: 'AI client not configured' };
+    }
+
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${this.config.apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text:
+                      'You are a professional color design expert specializing in dark mode interfaces. Always return valid JSON.\n\n' +
+                      prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              responseMimeType: 'application/json',
+            },
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        return {
+          success: false,
+          error: error.error?.message ?? 'Google AI API error',
+        };
+      }
+
+      const data = await response.json();
+      const content = data.candidates[0].content.parts[0].text;
+
+      return {
+        success: true,
+        data: JSON.parse(content),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
    * Call AI with prompt (routes to configured provider)
    */
   async call(prompt: string): Promise<AIResponse> {
@@ -166,6 +225,8 @@ export class AIClient {
       return this.callOpenAI(prompt);
     } else if (this.config.provider === 'anthropic') {
       return this.callAnthropic(prompt);
+    } else if (this.config.provider === 'google') {
+      return this.callGoogle(prompt);
     }
 
     return { success: false, error: 'Unknown provider' };

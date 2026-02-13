@@ -8,13 +8,16 @@ import { PresetCard } from '../components/PresetCard';
 import { ContrastBadge } from '../components/ContrastBadge';
 import { AIEnhanceButton } from '../components/palette/AIEnhanceButton';
 import { AIEnhanceModal } from '../components/palette/AIEnhanceModal';
+import { ColorPicker } from '../components/palette/ColorPicker';
 import { useDesignStore } from '../stores/designStore';
 import { useContrastValidation } from '../hooks/useContrastValidation';
-import { PRESETS } from '../utils/colorConversion';
+import { PRESETS, generateDarkPalette } from '../utils/colorConversion';
+import type { DarkColorEntry } from '../types';
 
 export function Analysis() {
   const navigate = useNavigate();
   const [showAIModal, setShowAIModal] = useState(false);
+  const [editingColor, setEditingColor] = useState<{ index: number; color: DarkColorEntry } | null>(null);
   const {
     palette,
     darkPalette,
@@ -32,6 +35,24 @@ export function Analysis() {
   } = useDesignStore();
 
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
+
+  const handleColorChange = (index: number, newColor: string) => {
+    if (!darkPalette) return;
+    
+    const updated = { ...darkPalette };
+    updated.colors[index] = { ...updated.colors[index], hex: newColor };
+    
+    // Update background/surface/text colors if those roles changed
+    if (updated.colors[index].role === 'background') {
+      updated.backgroundColor = newColor;
+    } else if (updated.colors[index].role === 'surface') {
+      updated.surfaceColor = newColor;
+    } else if (updated.colors[index].role === 'text') {
+      updated.textColor = newColor;
+    }
+    
+    setDarkPalette(updated);
+  };
 
   if (!palette || !darkPalette) {
     navigate('/upload');
@@ -86,16 +107,21 @@ export function Analysis() {
               </h2>
               <div className="space-y-4">
                 {darkPalette.colors.map((color, i) => (
-                  <ColorSwatch
+                  <div
                     key={i}
-                    hex={color.hex}
-                    name={color.name}
-                    role={color.role}
-                    originalHex={color.originalHex}
-                    apcaValue={color.apcaValue}
-                    showContrast
-                    size="md"
-                  />
+                    onClick={() => setEditingColor({ index: i, color })}
+                    className="cursor-pointer hover:ring-2 hover:ring-primary-500 rounded-lg transition-all"
+                  >
+                    <ColorSwatch
+                      hex={color.hex}
+                      name={color.name}
+                      role={color.role}
+                      originalHex={color.originalHex}
+                      apcaValue={color.apcaValue}
+                      showContrast
+                      size="md"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
@@ -299,6 +325,16 @@ export function Analysis() {
           issues={issues.map(issue => `${issue.element}: Contrast too low (${issue.foreground} on ${issue.background}, Lc ${Math.abs(issue.apcaValue).toFixed(1)}, needs ${issue.minRequired})`)}
           onApply={setDarkPalette}
           onClose={() => setShowAIModal(false)}
+        />
+      )}
+
+      {/* Color Picker Modal */}
+      {editingColor && (
+        <ColorPicker
+          color={editingColor.color.hex}
+          name={editingColor.color.name}
+          onSave={newColor => handleColorChange(editingColor.index, newColor)}
+          onClose={() => setEditingColor(null)}
         />
       )}
     </div>

@@ -8,7 +8,7 @@ import {
 } from '../../utils/aiClient';
 
 export default function AISettings() {
-  const [provider, setProvider] = useState<'openai' | 'anthropic'>('openai');
+  const [provider, setProvider] = useState<'openai' | 'anthropic' | 'google'>('openai');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -98,11 +98,12 @@ export default function AISettings() {
         </label>
         <select
           value={provider}
-          onChange={e => setProvider(e.target.value as 'openai' | 'anthropic')}
+          onChange={e => setProvider(e.target.value as 'openai' | 'anthropic' | 'google')}
           className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
         >
           <option value="openai">OpenAI (GPT-4o)</option>
           <option value="anthropic">Anthropic (Claude 3.5 Sonnet)</option>
+          <option value="google">Google AI (Gemini 2.0 Flash)</option>
         </select>
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           {provider === 'openai' && (
@@ -128,6 +129,19 @@ export default function AISettings() {
                 className="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 console.anthropic.com
+              </a>
+            </>
+          )}
+          {provider === 'google' && (
+            <>
+              Get your API key at{' '}
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                aistudio.google.com/app/apikey
               </a>
             </>
           )}
