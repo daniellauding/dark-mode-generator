@@ -40,7 +40,7 @@ export function Upload() {
             Upload a screenshot or paste a website URL to extract colors and generate dark mode.
           </p>
           <p className="text-dark-600 text-sm max-w-md mx-auto">
-            ✨ AI-powered CSS extraction available with API key (Settings)
+            💡 Try the <strong className="text-dark-400">"Paste URL"</strong> tab below to extract from websites like linear.app, vercel.com, or supabase.com
           </p>
         </div>
 

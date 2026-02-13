@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 import { ExportModal } from '../components/ExportModal';
 import { ContrastBadge } from '../components/ContrastBadge';
 import { AccessibilityPanel } from '../components/AccessibilityPanel';
+import { LivePreviewCompare } from '../components/LivePreviewCompare';
 import { Toast } from '../components/Toast';
 import { useDesignStore } from '../stores/designStore';
 import { useContrastValidation } from '../hooks/useContrastValidation';
@@ -86,9 +87,12 @@ function MockUI({ palette, mode }: { palette: { bg: string; surface: string; tex
 
 export function Preview() {
   const navigate = useNavigate();
-  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation } = useDesignStore();
+  const { palette, darkPalette, showExportModal, setShowExportModal, editingPaletteId, activePreset, bgDarkness, textLightness, accentSaturation, imagePreview, imageName } = useDesignStore();
   const { issues, passCount, totalChecked } = useContrastValidation(darkPalette);
   const { user, loading: authLoading } = useAuth();
+  
+  // Detect if source is URL vs image
+  const isURLSource = imagePreview?.startsWith('http') ?? false;
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const [quickDownloaded, setQuickDownloaded] = useState(false);
@@ -227,31 +231,44 @@ export function Preview() {
           <AccessibilityPanel />
         </div>
 
-        {/* Side by side preview */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div
-            ref={leftRef}
-            onScroll={() => handleScroll('left')}
-            className="overflow-auto"
-          >
+        {/* Preview */}
+        {isURLSource && imagePreview ? (
+          <div className="mb-8">
             <div className="flex items-center gap-2 mb-3">
-              <Sun size={14} className="text-warning" />
-              <span className="text-sm font-medium text-dark-300">Light Mode</span>
+              <span className="text-sm font-medium text-dark-300">Live Comparison</span>
+              <span className="text-xs text-dark-500">Drag slider to compare</span>
             </div>
-            <MockUI palette={lightPalette} mode="light" />
+            <LivePreviewCompare
+              url={imagePreview}
+              darkCSS={generateCSS(darkPalette)}
+            />
           </div>
-          <div
-            ref={rightRef}
-            onScroll={() => handleScroll('right')}
-            className="overflow-auto"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Moon size={14} className="text-primary-400" />
-              <span className="text-sm font-medium text-dark-300">Dark Mode</span>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div
+              ref={leftRef}
+              onScroll={() => handleScroll('left')}
+              className="overflow-auto"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Sun size={14} className="text-warning" />
+                <span className="text-sm font-medium text-dark-300">Light Mode</span>
+              </div>
+              <MockUI palette={lightPalette} mode="light" />
             </div>
-            <MockUI palette={darkUI} mode="dark" />
+            <div
+              ref={rightRef}
+              onScroll={() => handleScroll('right')}
+              className="overflow-auto"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Moon size={14} className="text-primary-400" />
+                <span className="text-sm font-medium text-dark-300">Dark Mode</span>
+              </div>
+              <MockUI palette={darkUI} mode="dark" />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Contrast issues detail */}
         {issues.length > 0 && (

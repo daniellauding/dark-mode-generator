@@ -325,7 +325,7 @@ export function UploadZone({ onFileUpload, onUrlSubmit, onBatchUpload, isLoading
               type="url"
               value={url}
               onChange={e => { setUrl(e.target.value); setUrlError(''); }}
-              placeholder="https://example.com/design.png"
+              placeholder="https://linear.app (or image URL)"
               className="w-full px-4 py-3 pl-10 rounded-xl bg-dark-800 border border-dark-600 text-dark-100 placeholder:text-dark-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all"
               onKeyDown={e => e.key === 'Enter' && handleUrlSubmit()}
             />
